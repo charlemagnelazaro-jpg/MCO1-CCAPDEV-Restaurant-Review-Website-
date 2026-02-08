@@ -4,12 +4,12 @@ import viteLogo from '/vite.svg'
 import './Home.css'
 import Navbar from './components/Navbar'
 
-function App() {
+function Home() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <Navbar />
+      <h1>Home</h1>
       <p>
         Lebron the goat
       </p>
@@ -17,4 +17,4 @@ function App() {
   )
 }
 
-export default App
+export default Home
