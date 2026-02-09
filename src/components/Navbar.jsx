@@ -33,7 +33,7 @@ const Navbar = () => {
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="font-bold border-2 border-black">Log In</Button>
+              <Button variant="outline" className="font-bold border-1 border-black">Log In</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <div className="flex flex-col items-center gap-2 mb-2">

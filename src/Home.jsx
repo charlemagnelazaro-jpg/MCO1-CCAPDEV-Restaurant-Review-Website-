@@ -1,15 +1,19 @@
 import { useState } from 'react'
+import RestaurantCard from './RestaurantCard'
 
 function Home() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <h1>Home</h1>
-      <p>
-        Lebron the goat
-      </p>
-    </>
+    <div className='m-5'>
+      <p>Hello</p>
+      <h1>Explore</h1>
+      <div className='flex flex-row gap-2'>
+        <RestaurantCard/>
+        <RestaurantCard/>
+        <RestaurantCard/>
+      </div>
+    </div>
   )
 }
 

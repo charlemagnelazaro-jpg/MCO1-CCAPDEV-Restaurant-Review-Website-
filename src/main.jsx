@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import { Outlet } from 'react-router-dom'
 import ProfilePage from './ProfilePage'
+import RestaurantCard from './RestaurantCard'
 const Layout = () => {
   return (
     <>
@@ -37,5 +38,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
+    {/* */}
   </StrictMode>,
 )
