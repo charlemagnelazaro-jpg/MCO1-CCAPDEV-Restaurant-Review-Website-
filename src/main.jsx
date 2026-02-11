@@ -8,6 +8,7 @@ import { Outlet } from 'react-router-dom'
 import ProfilePage from './ProfilePage'
 import RestaurantCard from './RestaurantCard'
 import { AuthProvider } from './context/AuthContext'
+import RestoReview from './RestoReview'
 
 const Layout = () => {
   return (
