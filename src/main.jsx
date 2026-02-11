@@ -7,6 +7,8 @@ import Navbar from './components/Navbar'
 import { Outlet } from 'react-router-dom'
 import ProfilePage from './ProfilePage'
 import RestaurantCard from './RestaurantCard'
+import { AuthProvider } from './context/AuthContext'
+
 const Layout = () => {
   return (
     <>
@@ -37,7 +39,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
     {/* */}
   </StrictMode>,
 )

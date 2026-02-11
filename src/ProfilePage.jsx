@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { EditProfile } from '@/components/ui/edit-profile'
 import { Card, CardContent, CardHeader, CardTitle } from './components/card'
 import { Avatar, AvatarImage, AvatarFallback } from './components/avatar'
@@ -6,13 +6,18 @@ import { Button } from './components/button'
 import { MapPin } from 'lucide-react'
 import AnimatedLoadingSkeleton from './components/ui/animated-loading-skeleton'
 import gsap from 'gsap'
-import dummyProfile from './assets/dummy_profile.jpg'
 import profileCover from './assets/profile_cover.jpg'
+import { useAuth } from './context/AuthContext'
+import { Link } from 'react-router-dom'
 
 const ProfilePage = () => {
   const containerRef = useRef(null)
+  const { user, updateProfile } = useAuth();
 
   useEffect(() => {
+    // Only run animation if user exists
+    if (!user) return;
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
 
@@ -66,47 +71,21 @@ const ProfilePage = () => {
     }, containerRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [user]) // Re-run if user loads
 
-  // random data
-  const [user, setUser] = useState({
-    name: "P. Carti",
-    location: "New York City, NY",
-    bio: "Food enthusiast exploring local gems. Always looking for the perfect taco.",
-    img: dummyProfile,
-    stats: {
-      reviews: 42,
-      photos: 115,
-      followers: 88
-    },
-    reviews: [
-      {
-        id: 1,
-        restaurant: "Good Munch",
-        rating: 4,
-        text: "The food is great and the munch is in fact good but one thing that bothers me is that the wait time is a bit long...",
-        time: "5 mins ago",
-        image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-      },
-      {
-        id: 2,
-        restaurant: "Burger Joint",
-        rating: 5,
-        text: "Best burger in town! Juicy, flavorful, and the fries are to die for. Definitely coming back.",
-        time: "2 days ago",
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-      },
-      {
-        id: 3,
-        restaurant: "Pasta Place",
-        rating: 3,
-        text: "The pasta was okay, but the service was slow. Ambience is nice though.",
-        time: "1 week ago",
-        image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-      }
-    ]
-  })
-
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Please Log In</h2>
+          <p className="mb-4">You need to be logged in to view your profile.</p>
+          <Link to="/">
+            <Button>Go to Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="min-h-screen bg-background pb-10 overflow-hidden">
@@ -120,7 +99,7 @@ const ProfilePage = () => {
         <div className="profile-info-container relative -mt-20 mb-8 flex flex-col md:flex-row gap-6 items-end md:items-end p-4">
           <Avatar className="profile-avatar w-40 h-40 border-4 border-background shadow-xl z-10 rounded-full">
             <AvatarImage src={user.img} alt={user.name} />
-            <AvatarFallback>PC</AvatarFallback>
+            <AvatarFallback>{user.name ? user.name.charAt(0) : "U"}</AvatarFallback>
           </Avatar>
 
           <div className="profile-text flex-1 text-center md:text-left mb-2">
@@ -134,7 +113,7 @@ const ProfilePage = () => {
           <div className="profile-action mb-4 w-full md:w-auto">
             <EditProfile
               profile={user}
-              setProfile={setUser}
+              setProfile={updateProfile}
               trigger={
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8 py-6 text-lg w-full md:w-auto font-semibold shadow-lg transition-transform hover:scale-105">
                   Edit Profile
