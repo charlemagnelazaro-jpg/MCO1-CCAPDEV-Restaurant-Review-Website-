@@ -65,12 +65,13 @@ const Navbar = () => {
   return (
     <div className="fixed top-0 left-0 right-0 bg-gray-50 h-15 px-6 flex items-center border-b-2 z-50">
       <div className="flex justify-between items-center w-full">
-        <div className="flex items-center  gap-2">
-          <Link to="/">
+
+        <Link to="/">
+          <div className="flex items-center  gap-2">
             <img src={Logo} width='32px' alt="Logo" />
-          </Link>
-          <p>ArcherEats</p>
-        </div>
+            <p>ArcherEats</p>
+          </div>
+        </Link>
         <div className="flex items-center gap-4">
           <SearchBar />
 

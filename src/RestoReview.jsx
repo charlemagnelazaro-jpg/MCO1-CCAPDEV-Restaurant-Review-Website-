@@ -10,7 +10,8 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from './components/ui/dropzone'
-import { Button } from '@/components/ui/button'; // Adjusted import to standard shadcn path
+import { Button } from '@/components/ui/button';
+import { reviews } from './reviews'
 
 const RestoReview = () => {
     const [rating, setRating] = useState(0);
@@ -54,29 +55,16 @@ const RestoReview = () => {
                 </div>
                 
                 <div className="flex flex-col gap-4">
-                    <ReviewCard
-                        name="Miko de Lara"
-                        handle="DLSU '24 | ID 120"
-                        review="The undisputed king of Agno. That T-bone steak with extra garlic rice is the only thing that gets me through back-to-back majors. Don't forget the gravy!"
-                        rating={5.0}
-                        imageUrl="https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg"
-                    />
-
-                    <ReviewCard
-                        name="Chloe Evangelista"
-                        handle="Lia-Com Student"
-                        review="Good Munch is literally my childhood! Best value for money near Taft. The serving size is huge, though the line during 12:45 PM break can be a bit crazy. Totally worth the wait."
-                        rating={4.5}
-                        imageUrl="https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg"
-                    />
-
-                    <ReviewCard
-                        name="Justin Tiu"
-                        handle="Verified Foodie"
-                        review="Reliable, fast (usually), and hits the spot every time. It's the ultimate comfort food after a long day at Andrew Building. Pro tip: pair the pork chops with their signature sauce."
-                        rating={5.0}
-                        imageUrl="https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg"
-                    />
+                    {reviews.map((item) => (
+                        <ReviewCard
+                        key={item.id}
+                        name={item.name}
+                        handle={item.handle}
+                        review={item.review}
+                        rating={item.rating}
+                        imageUrl={item.imageUrl}
+                        />
+                    ))}
                 </div>
             </div>
 

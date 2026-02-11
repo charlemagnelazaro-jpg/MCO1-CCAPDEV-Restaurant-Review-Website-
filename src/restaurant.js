@@ -3,7 +3,7 @@ export const restaurants = [
         name: 'Good Munch',
         location: 'Agno Food Complex',
         rating: 4.5,
-        image: './assets/resto.jpg'
+        image: './assets/good_munch.jpg'
     },
     {
         name: 'Pericos',
@@ -21,7 +21,7 @@ export const restaurants = [
         name: "McDonald's",
         location: 'Malapit sa LRT',
         rating: 4.0,
-        image: './assets/resto.jpg'
+        image: './assets/mcdoTaft.jpg'
     },
     {
         name: 'Coco Buko',
