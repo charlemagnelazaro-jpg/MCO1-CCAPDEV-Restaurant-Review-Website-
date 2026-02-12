@@ -42,7 +42,7 @@ function Home() {
           <CarouselContent className="-ml-2">
             {restaurants.map((restaurant, index) => (
               <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <Link to="/review">
+                <Link to={`/review/${encodeURIComponent(restaurant.name)}`}>
                   <RestaurantCard restaurant={restaurant} />
                 </Link>
               </CarouselItem>
