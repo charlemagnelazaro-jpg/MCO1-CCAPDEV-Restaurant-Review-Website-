@@ -25,6 +25,7 @@ const Navbar = () => {
   // Login State
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [error, setError] = useState("");
 
   // Register State
   const [regEmail, setRegEmail] = useState("");
@@ -36,29 +37,29 @@ const Navbar = () => {
     const result = login(loginEmail, loginPassword);
     if (result.success) {
       setIsOpen(false);
-      // Reset form
       setLoginEmail("");
       setLoginPassword("");
+      setError("");
     } else {
-      alert(result.message);
+      setError(result.message);
     }
   };
 
   const handleRegister = (e) => {
     e.preventDefault();
     if (regPassword !== regConfirm) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
     const result = register(regEmail, regPassword);
     if (result.success) {
       setIsOpen(false);
-      // Reset form
       setRegEmail("");
       setRegPassword("");
       setRegConfirm("");
+      setError("");
     } else {
-      alert(result.message);
+      setError(result.message);
     }
   };
 
@@ -104,6 +105,11 @@ const Navbar = () => {
 
                   <TabsContent value="login">
                     <form onSubmit={handleLogin} className="space-y-4">
+                      {error && (
+                        <div className="text-red-500 text-sm font-medium text-center">
+                          {error}
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
                         <Input
