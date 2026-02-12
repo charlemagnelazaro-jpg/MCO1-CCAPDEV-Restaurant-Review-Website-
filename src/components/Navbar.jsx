@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Logo from '../assets/logo.png'
+import Logo from '../assets/logo_transparent.png'
 import ProfileIcon from '../assets/profile.png'
 import SearchBar from './SearchBar';
 import { Button } from './ui/button';
@@ -68,7 +68,7 @@ const Navbar = () => {
 
         <Link to="/">
           <div className="flex items-center gap-2 ">
-            <img className="rounded-lg bg-white" src={Logo} width="32px" alt="Logo" />
+            <img className="rounded-lg" src={Logo} width="32px" alt="Logo" />
             <p className='font-bold'>ArcherEats</p>
           </div>
         </Link>
