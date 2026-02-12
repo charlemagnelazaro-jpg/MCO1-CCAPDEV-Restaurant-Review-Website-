@@ -13,14 +13,26 @@ import { Button } from '@/components/ui/button';
 import { reviews } from './reviews'
 import { restaurants } from './restaurant' 
 import { useParams } from 'react-router-dom' 
-import SearchBar from './components/SearchReview'
+import SearchBar from './components/SearchBar'
+import FilterBar from './components/FilterBar'
+
+
 
 const RestoReview = () => {
     const { name } = useParams(); 
     const [rating, setRating] = useState(0);
     const [files, setFiles] = useState(null);
 
+
+    //for search review
+    const [searchQuery, setSearchQuery] = useState("");
+
     const restaurant = restaurants.find(r => r.name === decodeURIComponent(name));
+
+    const filteredReviews = reviews.filter((r) => 
+        r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.review.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     if (!restaurant) return <div>Restaurant not found.</div>;
 
@@ -45,7 +57,6 @@ const RestoReview = () => {
                     <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded border border-yellow-200">
                         <img src={Star} width='16px' alt="Star"/>
                         <span className="font-semibold">{restaurant.rating.toFixed(1)}</span>
-                        <span className="text-slate-500">(124 reviews)</span>
                     </div>
                     <div className="flex items-center gap-1 text-slate-600">
                         <img src={Pin} width='16px' alt="Location"/>
@@ -62,7 +73,10 @@ const RestoReview = () => {
                     <h2 className="text-xl font-bold w-full">Community Reviews</h2>
 
                     <div className='flex items-center gap-4'>
-                        <SearchBar className='' />
+                        <FilterBar onChange={(e) => setSearchQuery(e.target.value)}/>
+                            <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">
+                            {filteredReviews.length}
+                        </span>
                         <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">124</span>
                     </div>
                     
@@ -70,7 +84,7 @@ const RestoReview = () => {
                 
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-4">
-                        {reviews.map((item) => (
+                        {filteredReviews.map((item) => (
                             <ReviewCard
                             key={item.id}
                             {...item} 
