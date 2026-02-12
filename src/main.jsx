@@ -9,6 +9,7 @@ import ProfilePage from './ProfilePage'
 import RestaurantCard from './RestaurantCard'
 import { AuthProvider } from './context/AuthContext'
 import RestoReview from './RestoReview'
+import RestoReviewResponse from './RestoReviewResponse'
 
 const Layout = () => {
   return (
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: '/review/:name',
         element: <RestoReview/>
+      },
+      {
+        path: '/reviewResponse',
+        element: <RestoReviewResponse/>
       }
     ]
   }

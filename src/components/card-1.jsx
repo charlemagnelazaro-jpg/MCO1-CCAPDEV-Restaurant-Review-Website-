@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils"; // Assuming 'cn' utility from shadcn setup
-
+import { Button } from "./ui/button";
 const ReviewCard = React.forwardRef(({ name, handle, review, rating, imageUrl, className }, ref) => {
   // Animation variants for framer-motion
   const cardVariants = {
@@ -55,6 +55,26 @@ const ReviewCard = React.forwardRef(({ name, handle, review, rating, imageUrl, c
       <p id="review-content" className="mt-4 text-sm text-muted-foreground">
         {review}
       </p>
+      <br></br>
+      <div className="inline-flex -space-x-px rounded-lg shadow-sm shadow-black/5 rtl:space-x-reverse">
+        <Button
+          className="rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10"
+          variant="outline"
+          size="icon"
+          aria-label="Upvote"
+        >
+          <ChevronUp size={10} strokeWidth={2} aria-hidden="true" />
+        </Button>
+        <span className="flex items-center border border-input px-3 text-sm font-medium">235</span>
+        <Button
+          className="rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10"
+          variant="outline"
+          size="icon"
+          aria-label="Downvote"
+        >
+          <ChevronDown size={10} strokeWidth={2} aria-hidden="true" />
+        </Button>
+      </div>
     </motion.div>
   );
 });
