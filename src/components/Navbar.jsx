@@ -189,8 +189,8 @@ const Navbar = () => {
             </div>
           )}
 
-          <Link to="/profile">
-            <img src={ProfileIcon} width='32px' alt="Profile" />
+          <Link to="/profile" className="flex-shrink-0">
+            <img src={ProfileIcon} width='24px' alt="Profile" />
           </Link>
 
         </div >
