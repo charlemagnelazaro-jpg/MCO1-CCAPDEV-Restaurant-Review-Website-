@@ -1,3 +1,4 @@
+
 export const restaurants = [
     {
         name: 'Good Munch',

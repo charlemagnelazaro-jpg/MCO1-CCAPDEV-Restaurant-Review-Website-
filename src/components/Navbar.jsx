@@ -64,12 +64,12 @@ const Navbar = () => {
 
   return (
     <div className="fixed top-0 left-0 right-0 bg-gray-50 h-15 px-6 flex items-center border-b-2 z-50">
-      <div className="flex justify-between items-center w-full">
+      <div className="flex justify-between items-center w-full mx-5">
 
         <Link to="/">
           <div className="flex items-center gap-2 ">
             <img className="rounded-lg bg-white" src={Logo} width="32px" alt="Logo" />
-            <p>ArcherEats</p>
+            <p className='font-bold'>ArcherEats</p>
           </div>
         </Link>
         <div className="flex items-center gap-4">
