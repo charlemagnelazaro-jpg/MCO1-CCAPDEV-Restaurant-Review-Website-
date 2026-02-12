@@ -10,6 +10,7 @@ import RestaurantCard from './RestaurantCard'
 import { AuthProvider } from './context/AuthContext'
 import RestoReview from './RestoReview'
 import RestoReviewResponse from './RestoReviewResponse'
+import { Toaster } from './components/sonner'
 
 const Layout = () => {
   return (
@@ -51,6 +52,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
+      <Toaster position="bottom-right" />
     </AuthProvider>
     {/* */}
   </StrictMode>,

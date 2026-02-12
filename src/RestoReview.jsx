@@ -15,13 +15,19 @@ import { restaurants } from './restaurant'
 import { useParams } from 'react-router-dom' 
 import SearchBar from './components/SearchBar'
 import FilterBar from './components/FilterBar'
+import { useAuth } from './context/AuthContext'
+import { toast } from 'sonner'
 
 
 
 const RestoReview = () => {
     const { name } = useParams(); 
+    const { user } = useAuth();
     const [rating, setRating] = useState(0);
     const [files, setFiles] = useState(null);
+    const [title, setTitle] = useState("");
+    const [comment, setComment] = useState("");
+    const [reviewList, setReviewList] = useState(reviews);
 
 
     //for search review
@@ -29,7 +35,7 @@ const RestoReview = () => {
 
     const restaurant = restaurants.find(r => r.name === decodeURIComponent(name));
 
-    const filteredReviews = reviews.filter((r) => 
+    const filteredReviews = reviewList.filter((r) => 
         r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.review.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -38,6 +44,41 @@ const RestoReview = () => {
 
     const handleDrop = (acceptedFiles) => {
         setFiles(acceptedFiles);
+    }
+
+    const handlePostReview = () => {
+        if (!user) {
+            toast.error("Please log in to post a review.");
+            return;
+        }
+        if (rating === 0) {
+            toast.error("Please select a rating.");
+            return;
+        }
+        if (!title.trim()) {
+            toast.error("Please add a title.");
+            return;
+        }
+        if (!comment.trim()) {
+            toast.error("Please write a comment.");
+            return;
+        }
+
+        const newReview = {
+            id: Date.now(),
+            name: user.name,
+            review: comment.trim(),
+            rating: rating,
+            imageUrl: typeof user.img === 'string' ? user.img : "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg",
+            handle: restaurant.name,
+        };
+
+        setReviewList([newReview, ...reviewList]);
+        setRating(0);
+        setTitle("");
+        setComment("");
+        setFiles(null);
+        toast.success("Review posted successfully!");
     }
     const getImageUrl = (path) => {
         return new URL(path, import.meta.url).href;
@@ -115,6 +156,8 @@ const RestoReview = () => {
                             <Textarea 
                                 className="min-h-[50px]" 
                                 placeholder='Title'
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
                             />
 
                         </div>
@@ -124,6 +167,8 @@ const RestoReview = () => {
                             <Textarea 
                                 className="min-h-[100px]" 
                                 placeholder='Type your feedback here...'
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
                             />
                         </div>
 
@@ -143,7 +188,10 @@ const RestoReview = () => {
                             </Dropzone>
                         </div>
 
-                        <Button className='w-full bg-green-600 hover:bg-green-700 text-white'>
+                        <Button 
+                            className='w-full bg-green-600 hover:bg-green-700 text-white'
+                            onClick={handlePostReview}
+                        >
                             Post Review
                         </Button>
                     </div>
