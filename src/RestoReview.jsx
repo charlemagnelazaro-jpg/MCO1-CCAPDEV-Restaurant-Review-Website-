@@ -69,16 +69,14 @@ const RestoReview = () => {
                 </div>
                 
                 <div className="flex flex-col gap-4">
-                    {reviews.map((item) => (
-                        <ReviewCard
-                        key={item.id}
-                        name={item.name}
-                        handle={item.handle}
-                        review={item.review}
-                        rating={item.rating}
-                        imageUrl={item.imageUrl}
-                        />
-                    ))}
+                    <div className="flex flex-col gap-4">
+                        {reviews.map((item) => (
+                            <ReviewCard
+                            key={item.id}
+                            {...item} 
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 

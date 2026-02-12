@@ -5,7 +5,8 @@ export const reviews = [
     handle: "DLSU '24 | ID 120",
     review: "He stood unshaken, a voice in the storm A man of conviction, a heart reborn He spoke the truth when the cost was high He lived for Jesus, unafraid to die",
     rating: 5.0,
-    imageUrl: "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg"
+    imageUrl: "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg",
+    reply: "He is so good",
   },
   {
     id: 2,
