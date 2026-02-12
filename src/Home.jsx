@@ -38,7 +38,7 @@ function Home() {
       </section>
       <section>
         <h1 className="text-2xl font-bold mb-4">Explore</h1>
-        <Carousel className="w-full">
+        <Carousel className="w-full px-12"> 
           <CarouselContent className="-ml-2">
             {restaurants.map((restaurant, index) => (
               <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
@@ -48,13 +48,14 @@ function Home() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="left-4"/>
-          <CarouselNext className="right-4"/>
+          <CarouselPrevious className="left-0" />
+          <CarouselNext className="right-0" />
         </Carousel>
       </section>
+
       <section>
         <h1 className="text-2xl font-bold mb-4">Recent Reviews</h1>
-        <Carousel className="w-full">
+        <Carousel className="w-full px-12">
           <CarouselContent className="-ml-4">
             {reviewsGoodMunch.map((item) => (
               <CarouselItem key={item.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
@@ -68,8 +69,8 @@ function Home() {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="left-4"/>
-          <CarouselNext className="right-4"/>
+          <CarouselPrevious className="left-0" />
+          <CarouselNext className="right-0" />
         </Carousel>
       </section>
     </div>

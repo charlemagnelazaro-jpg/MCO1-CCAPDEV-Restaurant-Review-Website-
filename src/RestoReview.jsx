@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { reviews } from './reviews'
 import { restaurants } from './restaurant' 
 import { useParams } from 'react-router-dom' 
+import SearchBar from './components/SearchBar'
 
 const RestoReview = () => {
     const { name } = useParams(); 
@@ -58,8 +59,13 @@ const RestoReview = () => {
             
             <div className="md:col-span-2 flex-1 space-y-6">
                 <div className="flex items-center justify-between border-b pb-2">
-                    <h2 className="text-xl font-bold">Community Reviews</h2>
-                    <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">124</span>
+                    <h2 className="text-xl font-bold w-full">Community Reviews</h2>
+
+                    <div className='flex items-center gap-4'>
+                        <SearchBar className='' />
+                        <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">124</span>
+                    </div>
+                    
                 </div>
                 
                 <div className="flex flex-col gap-4">
@@ -90,6 +96,14 @@ const RestoReview = () => {
                                     onRatingChange={setRating} 
                                 />
                             </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium mb-1.5">Title</label>
+                            <Textarea 
+                                className="min-h-[50px]" 
+                                placeholder='Title'
+                            />
+
                         </div>
 
                         <div>
