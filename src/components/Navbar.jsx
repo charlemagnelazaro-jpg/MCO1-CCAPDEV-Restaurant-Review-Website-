@@ -48,7 +48,7 @@ const Navbar = () => {
   const handleRegister = (e) => {
     e.preventDefault();
     if (regPassword !== regConfirm) {
-      setError("Passwords do not match");
+      setError("Passwords do not match.");
       return;
     }
     const result = register(regEmail, regPassword);
@@ -97,7 +97,7 @@ const Navbar = () => {
                   </DialogHeader>
                 </div>
 
-                <Tabs defaultValue="login" className="w-full">
+                <Tabs defaultValue="login" className="w-full" onValueChange={() => setError("")}>
                   <TabsList className="grid w-full grid-cols-2 mb-4">
                     <TabsTrigger value="login">Login</TabsTrigger>
                     <TabsTrigger value="register">Register</TabsTrigger>
@@ -145,6 +145,11 @@ const Navbar = () => {
 
                   <TabsContent value="register">
                     <form onSubmit={handleRegister} className="space-y-4">
+                      {error && (
+                        <div className="text-red-500 text-sm font-medium text-center">
+                          {error}
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <Label htmlFor="register-email">Email</Label>
                         <Input
