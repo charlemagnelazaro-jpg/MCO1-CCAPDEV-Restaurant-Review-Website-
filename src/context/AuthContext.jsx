@@ -281,7 +281,7 @@ export const AuthProvider = ({ children }) => {
             name: name || "New User",
             location: "Unknown Location",
             bio: "No bio yet.",
-            img: dummyProfile, // Default image
+            img: "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg", // Default image
             stats: { reviews: 0, photos: 0, followers: 0 },
             reviews: []
         };
