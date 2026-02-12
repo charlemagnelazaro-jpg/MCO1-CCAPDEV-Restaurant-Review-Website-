@@ -57,6 +57,7 @@ const RestoReview = () => {
                     <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded border border-yellow-200">
                         <img src={Star} width='16px' alt="Star"/>
                         <span className="font-semibold">{restaurant.rating.toFixed(1)}</span>
+                        <span className="text-slate-500">(124 reviews)</span>
                     </div>
                     <div className="flex items-center gap-1 text-slate-600">
                         <img src={Pin} width='16px' alt="Location"/>
@@ -77,7 +78,7 @@ const RestoReview = () => {
                             <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">
                             {filteredReviews.length}
                         </span>
-                        <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">124</span>
+                        
                     </div>
                     
                 </div>
