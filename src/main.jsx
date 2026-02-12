@@ -39,7 +39,7 @@ const router = createBrowserRouter([
         element: <RestoReview/>
       },
       {
-        path: '/reviewResponse',
+        path: '/reviewResponse/:name',
         element: <RestoReviewResponse/>
       }
     ]
