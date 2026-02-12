@@ -13,7 +13,7 @@ export const restaurants = [
         image: './assets/resto.jpg' 
     },
     {
-        name: 'Rita\'s Bacsilog',
+        name: 'Ate Rica\'s Bacsilog',
         location: 'Agno Food Complex',
         rating: 3.2,
         image: './assets/resto.jpg'
@@ -32,7 +32,7 @@ export const restaurants = [
     },
     {
         name: 'Potato Corner',
-        location: 'Blowmen',
+        location: 'Bloemen',
         rating: 4.3,
         image: './assets/resto.jpg'
     }
