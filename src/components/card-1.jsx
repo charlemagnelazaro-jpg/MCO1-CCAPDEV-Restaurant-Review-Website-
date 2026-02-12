@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp, Star, Reply } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils"; 
 import { Button } from "./ui/button";
-
+import {useState} from "react"
 const ReviewCard = React.forwardRef(({ 
   name, 
   handle, 
@@ -13,7 +13,34 @@ const ReviewCard = React.forwardRef(({
   reply, 
   className 
 }, ref) => {
-  
+
+  const [voteCount, setVoteCount]= React.useState(0)
+  const [userVote , setUserVote] = React.useState(null)
+
+    const handleUpvote = () => {
+    if (userVote === "upvote") {
+      setVoteCount(voteCount - 1);
+      setUserVote(null);
+    } else if (userVote === "downvote") {
+      setVoteCount(voteCount + 2);
+      setUserVote("upvote");
+    } else {
+      setVoteCount(voteCount + 1);
+      setUserVote("upvote");
+    }
+  };
+  const handleDownvote = () => {
+    if (userVote === "downvote") {
+      setVoteCount(voteCount + 1);
+      setUserVote(null);
+    } else if (userVote === "upvote") {
+      setVoteCount(voteCount - 2);
+      setUserVote("downvote");
+    } else {
+      setVoteCount(voteCount - 1);
+      setUserVote("downvote");
+    }
+  };
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -100,21 +127,24 @@ const ReviewCard = React.forwardRef(({
       <div className="mt-6 flex items-center justify-between">
         <div className="inline-flex -space-x-px rounded-lg shadow-sm shadow-black/5">
           <Button
-            className="rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10"
+            className= {cn(`rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10 ${userVote === 'upvote' ? 'hover:bg-green-100 bg-green-100 hover:border-green-300 hover:text-green-700 text-green-700' : ''}`)}
             variant="outline"
             size="sm"
             aria-label="Upvote"
+            onClick={handleUpvote}
           >
             <ChevronUp size={14} strokeWidth={2.5} />
           </Button>
           <span className="flex items-center border-y border-input px-3 text-xs font-semibold bg-background">
-            235
+            {voteCount}
           </span>
           <Button
-            className="rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10"
+            
+            className={cn(`rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10 ${userVote === 'downvote' ? 'hover:bg-red-100 bg-red-100 hover:border-red-300 hover:text-red-700 text-red-700' :''}`)}
             variant="outline"
             size="sm"
             aria-label="Downvote"
+            onClick={handleDownvote}
           >
             <ChevronDown size={14} strokeWidth={2.5} />
           </Button>

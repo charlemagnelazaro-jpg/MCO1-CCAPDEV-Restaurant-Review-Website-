@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { reviews } from './reviews'
 import { restaurants } from './restaurant' 
 import { useParams } from 'react-router-dom' 
-import SearchBar from './components/SearchBar'
+import SearchBar from './components/SearchReview'
 
 const RestoReview = () => {
     const { name } = useParams(); 
