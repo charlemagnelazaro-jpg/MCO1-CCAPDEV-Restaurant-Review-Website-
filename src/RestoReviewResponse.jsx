@@ -16,7 +16,7 @@ const RestoReview = () => {
 
     const restaurant = restaurants.find(r => r.name === decodeURIComponent(name));
     
-    const singleReview = reviews[0];
+    const singleReview = reviews[1];
 
     const getImageUrl = (path) => {
         return new URL(path, import.meta.url).href;
