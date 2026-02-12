@@ -32,7 +32,7 @@ export const restaurants = [
     },
     {
         name: 'Potato Corner',
-        location: 'Bloemen',
+        location: 'Blowmen',
         rating: 4.3,
         image: './assets/resto.jpg'
     }

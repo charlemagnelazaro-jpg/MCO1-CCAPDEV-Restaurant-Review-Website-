@@ -2,11 +2,17 @@ import React from 'react'
 import Resto from './assets/resto.jpg'
 import Pin from './assets/pin.png'
 import { Rating } from './components/rating'
+
 const RestaurantCard = ({ restaurant }) => {
   if (!restaurant) return null;
+
+  const getImageUrl = (path) => {
+        return new URL(path, import.meta.url).href;
+    };
+    
   return (
     <div className="bg-card border rounded-2xl shadow-md overflow-hidden w-80">
-        <img src={Resto} alt="restaurant" className="w-full h-48 object-cover rounded-t-2xl" />
+        <img src={getImageUrl(restaurant.image)} alt="restaurant" className="w-full h-48 object-cover rounded-t-2xl" />
         <div className="p-4">
         <p className="text-lg font-bold leading-tight mb-1 text-xl">{restaurant.name}</p>
             <div className="flex items-center text-sm text-muted-foreground gap-1 mb-3">
