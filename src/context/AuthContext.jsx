@@ -31,11 +31,15 @@ export const AuthProvider = ({ children }) => {
 
     // fetch(api/test) - get
 
-    const login = async (email, password) => {
+    const login = async (email, password, isRestaurant = false) => {
         try {
-            const res = await fetch('/api/login', {
-                method: 'POST', // method
-                headers: { 'Content-Type': 'application/json' }, //
+
+            // WILL CHECK WHETHER THE USER IS LOGGING IN AS A RESTAURANT OR NOT
+            // HAYDEN MAKE ROUTES LIKES THIS
+            const endpoint = isRestaurant ? '/api/restaurant/login' : '/api/login';
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({ email, password })
             });
@@ -53,9 +57,13 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (email, password, name) => {
+    const register = async (email, password, name, isRestaurant = false) => {
         try {
-            const res = await fetch('/api/register', {
+
+            // WILL CHECK WHETHER THE USER IS REGISTERING AS A RESTAURANT OR NOT
+            // HAYDEN MAKE ROUTES LIKE THIS
+            const endpoint = isRestaurant ? '/api/restaurant/register' : '/api/register';
+            const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
         reviews: { type: Number, default: 0 },
         photos: { type: Number, default: 0 },
         followers: { type: Number, default: 0 }
-    }
+    },
 }, {
     timestamps: true
 });

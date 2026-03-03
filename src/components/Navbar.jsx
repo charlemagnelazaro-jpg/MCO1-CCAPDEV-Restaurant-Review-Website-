@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from './badge-2'
+import { Checkbox } from "@/components/ui/checkbox"
 
 const Navbar = () => {
   const { user, login, register, logout } = useAuth();
@@ -25,20 +26,23 @@ const Navbar = () => {
   // Login State
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [loginAsRestaurant, setLoginAsRestaurant] = useState(false);
   const [error, setError] = useState("");
 
   // Register State
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regConfirm, setRegConfirm] = useState("");
+  const [registerAsRestaurant, setRegisterAsRestaurant] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const result = await login(loginEmail, loginPassword);
+    const result = await login(loginEmail, loginPassword, loginAsRestaurant);
     if (result.success) {
       setIsOpen(false);
       setLoginEmail("");
       setLoginPassword("");
+      setLoginAsRestaurant(false);
       setError("");
     } else {
       setError(result.message);
@@ -51,12 +55,13 @@ const Navbar = () => {
       setError("Passwords do not match.");
       return;
     }
-    const result = await register(regEmail, regPassword);
+    const result = await register(regEmail, regPassword, undefined, registerAsRestaurant);
     if (result.success) {
       setIsOpen(false);
       setRegEmail("");
       setRegPassword("");
       setRegConfirm("");
+      setRegisterAsRestaurant(false);
       setError("");
     } else {
       setError(result.message);
@@ -132,6 +137,25 @@ const Navbar = () => {
                           onChange={(e) => setLoginPassword(e.target.value)}
                         />
                       </div>
+                      <label
+                        htmlFor="login-restaurant-account"
+                        className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm cursor-pointer transition-colors ${loginAsRestaurant ? 'bg-primary/5 border-primary/50' : 'hover:bg-gray-50'}`}
+                      >
+                        <Checkbox
+                          id="login-restaurant-account"
+                          checked={loginAsRestaurant}
+                          onCheckedChange={(checked) => setLoginAsRestaurant(checked === true)}
+                          className="mt-1"
+                        />
+                        <div className="space-y-1 leading-none">
+                          <p className="text-sm font-medium leading-none">
+                            Log in as a Restaurant
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Access your restaurant dashboard to manage reviews.
+                          </p>
+                        </div>
+                      </label>
                       <div className="flex justify-end">
                         <a className="text-sm underline hover:no-underline" href="#">
                           Forgot password?
@@ -183,6 +207,25 @@ const Navbar = () => {
                           onChange={(e) => setRegConfirm(e.target.value)}
                         />
                       </div>
+                      <label
+                        htmlFor="register-restaurant-account"
+                        className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm cursor-pointer transition-colors ${registerAsRestaurant ? 'bg-primary/5 border-primary/50' : 'hover:bg-gray-50'}`}
+                      >
+                        <Checkbox
+                          id="register-restaurant-account"
+                          checked={registerAsRestaurant}
+                          onCheckedChange={(checked) => setRegisterAsRestaurant(checked === true)}
+                          className="mt-1"
+                        />
+                        <div className="space-y-1 leading-none">
+                          <p className="text-sm font-medium leading-none">
+                            Register as a Restaurant
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Create a page for your restaurant to interact with diners.
+                          </p>
+                        </div>
+                      </label>
                       <Button type="submit" className="w-full">
                         Register
                       </Button>
