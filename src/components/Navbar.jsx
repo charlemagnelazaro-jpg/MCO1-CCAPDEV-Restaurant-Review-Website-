@@ -32,9 +32,9 @@ const Navbar = () => {
   const [regPassword, setRegPassword] = useState("");
   const [regConfirm, setRegConfirm] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const result = login(loginEmail, loginPassword);
+    const result = await login(loginEmail, loginPassword);
     if (result.success) {
       setIsOpen(false);
       setLoginEmail("");
@@ -45,13 +45,13 @@ const Navbar = () => {
     }
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     if (regPassword !== regConfirm) {
       setError("Passwords do not match.");
       return;
     }
-    const result = register(regEmail, regPassword);
+    const result = await register(regEmail, regPassword);
     if (result.success) {
       setIsOpen(false);
       setRegEmail("");
