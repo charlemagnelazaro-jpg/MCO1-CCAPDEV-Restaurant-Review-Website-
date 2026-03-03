@@ -55,7 +55,7 @@ const Navbar = () => {
       setError("Passwords do not match.");
       return;
     }
-    const result = await register(regEmail, regPassword, undefined, registerAsRestaurant);
+    const result = await register(regEmail, regPassword, registerAsRestaurant);
     if (result.success) {
       setIsOpen(false);
       setRegEmail("");

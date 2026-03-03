@@ -3,7 +3,7 @@ import User from '../models/User.js';
 // POST register new user
 export const register = async (req, res) => {
     try {
-        const { email, password, name } = req.body;
+        const { email, password } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -12,8 +12,7 @@ export const register = async (req, res) => {
 
         const user = new User({
             email,
-            password,
-            name: name || 'New User'
+            password
         });
 
         await user.save();

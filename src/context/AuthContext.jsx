@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (email, password, name, isRestaurant = false) => {
+    const register = async (email, password, isRestaurant = false) => {
         try {
 
             // WILL CHECK WHETHER THE USER IS REGISTERING AS A RESTAURANT OR NOT
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ email, password, name })
+                body: JSON.stringify({ email, password })
             });
             const data = await res.json();
 
