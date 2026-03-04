@@ -22,7 +22,7 @@ export const register = async (req, res) => {
         res.status(201).json({ success: true, user: user.toJSON() });
     } catch (error) {
         console.error('Register error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -78,5 +78,15 @@ export const checkSession = async (req, res) => {
     } catch (error) {
         console.error('Check session error:', error);
         res.status(500).json({ user: null });
+    }
+};
+
+// Get all users raw for testing
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };

@@ -12,6 +12,9 @@ dotenv.config({ path: join(__dirname, '..', '.env') });
 
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import restaurantRoutes from './routes/restaurantRoutes.js';
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +27,7 @@ app.use(cors({
     credentials: true
 }));
 
+/*
 app.use(session({
     secret: process.env.SESSION_SECRET || 'archereats-secret-key',
     resave: false,
@@ -38,11 +42,24 @@ app.use(session({
         sameSite: 'lax'
     }
 }));
+*/
 
+app.use('/api/review', reviewRoutes);
+app.use('/api/restaurant', restaurantRoutes);
 app.use('/api', authRoutes);
 
 app.get('/', (req, res) => {
     res.json({ message: 'ArcherEats API is running' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('GLOBAL ERROR:', err);
+    res.status(500).json({
+        error: err.message,
+        stack: err.stack,
+        source: 'Global Error Handler'
+    });
 });
 
 app.listen(PORT, () => {
