@@ -1,23 +1,23 @@
 import * as React from "react";
 import { ChevronDown, ChevronUp, Star, Reply } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils"; 
+import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import {useState} from "react"
-const ReviewCard = React.forwardRef(({ 
-  name, 
-  handle, 
-  review, 
-  rating, 
-  imageUrl, 
-  reply, 
-  className 
+import { useState } from "react"
+const ReviewCard = React.forwardRef(({
+  name,
+  handle,
+  review,
+  rating,
+  imageUrl,
+  reply,
+  className
 }, ref) => {
 
-  const [voteCount, setVoteCount]= React.useState(0)
-  const [userVote , setUserVote] = React.useState(null)
+  const [voteCount, setVoteCount] = React.useState(0)
+  const [userVote, setUserVote] = React.useState(null)
 
-    const handleUpvote = () => {
+  const handleUpvote = () => {
     if (userVote === "upvote") {
       setVoteCount(voteCount - 1);
       setUserVote(null);
@@ -52,10 +52,10 @@ const ReviewCard = React.forwardRef(({
 
   const replyVariants = {
     hidden: { opacity: 0, height: 0 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       height: "auto",
-      transition: { duration: 0.3, delay: 0.2 } 
+      transition: { duration: 0.3, delay: 0.2 }
     }
   };
 
@@ -86,7 +86,7 @@ const ReviewCard = React.forwardRef(({
             <p className="text-sm text-muted-foreground">{handle}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-1 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-md text-sm font-bold border border-yellow-200/50">
           <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
           <span className="text-yellow-700 dark:text-yellow-500">{rating.toFixed(1)}</span>
@@ -97,7 +97,7 @@ const ReviewCard = React.forwardRef(({
         {reply && (
           <div className="absolute left-6 top-4 bottom-0 w-0.5 bg-muted -ml-[25px] z-0" />
         )}
-        
+
         <p id="review-content" className="mt-4 text-sm leading-relaxed text-foreground/90 relative z-10">
           {review}
         </p>
@@ -105,7 +105,7 @@ const ReviewCard = React.forwardRef(({
 
       <AnimatePresence>
         {reply && (
-          <motion.div 
+          <motion.div
             variants={replyVariants}
             initial="hidden"
             animate="visible"
@@ -127,7 +127,8 @@ const ReviewCard = React.forwardRef(({
       <div className="mt-6 flex items-center justify-between">
         <div className="inline-flex -space-x-px rounded-lg shadow-sm shadow-black/5">
           <Button
-            className= {cn(`rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10 ${userVote === 'upvote' ? 'hover:bg-green-100 bg-green-100 hover:border-green-300 hover:text-green-700 text-green-700' : ''}`)}
+            type="button"
+            className={cn(`rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10 ${userVote === 'upvote' ? 'hover:bg-green-100 bg-green-100 hover:border-green-300 hover:text-green-700 text-green-700' : ''}`)}
             variant="outline"
             size="sm"
             aria-label="Upvote"
@@ -139,8 +140,8 @@ const ReviewCard = React.forwardRef(({
             {voteCount}
           </span>
           <Button
-            
-            className={cn(`rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10 ${userVote === 'downvote' ? 'hover:bg-red-100 bg-red-100 hover:border-red-300 hover:text-red-700 text-red-700' :''}`)}
+            type="button"
+            className={cn(`rounded-none shadow-none first:rounded-s-lg last:rounded-e-lg focus-visible:z-10 ${userVote === 'downvote' ? 'hover:bg-red-100 bg-red-100 hover:border-red-300 hover:text-red-700 text-red-700' : ''}`)}
             variant="outline"
             size="sm"
             aria-label="Downvote"
@@ -149,7 +150,7 @@ const ReviewCard = React.forwardRef(({
             <ChevronDown size={14} strokeWidth={2.5} />
           </Button>
         </div>
-        
+
         <time className="text-[11px] text-muted-foreground uppercase font-medium">
           2 days ago
         </time>
