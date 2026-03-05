@@ -27,7 +27,6 @@ app.use(cors({
     credentials: true
 }));
 
-/*
 app.use(session({
     secret: process.env.SESSION_SECRET || 'archereats-secret-key',
     resave: false,
@@ -42,7 +41,6 @@ app.use(session({
         sameSite: 'lax'
     }
 }));
-*/
 
 app.use('/api/review', reviewRoutes);
 app.use('/api/restaurant', restaurantRoutes);
