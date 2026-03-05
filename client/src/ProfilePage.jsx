@@ -87,6 +87,20 @@ const ProfilePage = () => {
     );
   }
 
+   if (user.role === 'admin' && user.role !== 'owner') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+          <p className="mb-4">You do not have permission to view this profile.</p>
+          <Link to="/">
+            <Button>Go to Home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div ref={containerRef} className="min-h-screen bg-background pb-10 overflow-hidden">
 

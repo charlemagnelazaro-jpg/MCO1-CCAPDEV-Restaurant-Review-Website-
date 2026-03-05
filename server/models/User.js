@@ -26,6 +26,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'No bio yet.'
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin','owner'],
+        default: 'user'
+    },
     img: {
         type: String,
         default: 'https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg'

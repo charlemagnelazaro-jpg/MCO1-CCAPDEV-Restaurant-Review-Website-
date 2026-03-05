@@ -18,3 +18,15 @@ export const isAuthenticated = async (req, res, next) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+
+export const isNotAdmin = async (req, res, next) => {
+    try{
+        if (req.session.user.role !== 'admin') {
+            return next();
+        }
+        return res.status(403).json({ success: false, message: 'Forbidden' });
+    } catch (error) {
+        console.error('Auth middleware error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};

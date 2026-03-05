@@ -242,11 +242,11 @@ const Navbar = () => {
               <Button onClick={logout} variant="outline" className="font-bold border-1 border-black">Log Out</Button>
             </div>
           )}
-
-          <Link to="/profile" className="flex-shrink-0">
-            <img src={ProfileIcon} width='24px' alt="Profile" />
-          </Link>
-
+          {(user?.role !== 'admin' || user?.role === 'owner') && (
+            <Link to="/profile" className="flex-shrink-0">
+              <img src={ProfileIcon} width='24px' alt="Profile" />
+            </Link>
+          )}
         </div >
       </div >
     </div >
