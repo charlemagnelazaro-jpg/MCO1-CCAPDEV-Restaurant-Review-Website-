@@ -90,3 +90,25 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// PUT update user profile
+export const updateProfile = async (req, res) => {
+    try {
+        const { name, location, bio } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            { name, location, bio },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.json({ success: true, user: updatedUser.toJSON() });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};

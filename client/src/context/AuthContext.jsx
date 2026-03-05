@@ -95,9 +95,26 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    const updateProfile = (updatedData) => {
-        const updatedUser = { ...user, ...updatedData };
-        setUser(updatedUser);
+    const updateProfile = async (updatedData) => {
+        try {
+            const res = await fetch('/api/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(updatedData)
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                setUser(data.user);
+                return { success: true };
+            } else {
+                return { success: false, message: data.message };
+            }
+        } catch (error) {
+            console.error('Update profile failed:', error);
+            return { success: false, message: 'Network error' };
+        }
     };
 
     const value = {

@@ -22,8 +22,8 @@ export function EditProfile({ profile, setProfile, trigger }) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSave = () => {
-    setProfile(formData);
+  const handleSave = async () => {
+    await setProfile(formData);
     setIsOpen(false);
   };
 
