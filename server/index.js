@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import fileUpload from 'express-fileupload';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
@@ -22,6 +23,10 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 
 app.use(express.json());
+app.use(fileUpload({
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+    abortOnLimit: true,
+}));
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true

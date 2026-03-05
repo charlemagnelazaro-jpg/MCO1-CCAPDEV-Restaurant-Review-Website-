@@ -95,14 +95,34 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
-    const updateProfile = async (updatedData) => {
+    const updateProfile = async (updatedData, avatarFile = null) => {
         try {
-            const res = await fetch('/api/profile', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(updatedData)
-            });
+            let fetchOptions;
+
+            // if avatar file is uplaoded, body will be in terms of form data
+            if (avatarFile) {
+                const formData = new FormData();
+                formData.append('name', updatedData.name);
+                formData.append('location', updatedData.location);
+                formData.append('bio', updatedData.bio);
+                formData.append('avatar', avatarFile);
+
+                fetchOptions = {
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: formData,
+                };
+            } else {
+                // if no avatar file is uploaded, body will be in terms of json
+                fetchOptions = {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(updatedData),
+                };
+            }
+
+            const res = await fetch('/api/profile', fetchOptions);
             const data = await res.json();
 
             if (data.success) {

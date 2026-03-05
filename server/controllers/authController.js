@@ -96,9 +96,18 @@ export const updateProfile = async (req, res) => {
     try {
         const { name, location, bio } = req.body;
 
+        const updateData = { name, location, bio };
+
+        // if pic was uploaded, convert to base 64
+        if (req.files && req.files.avatar) {
+            const avatar = req.files.avatar;
+            const base64 = `data:${avatar.mimetype};base64,${avatar.data.toString('base64')}`;
+            updateData.img = base64;
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
             req.user._id,
-            { name, location, bio },
+            updateData,
             { new: true, runValidators: true }
         );
 
