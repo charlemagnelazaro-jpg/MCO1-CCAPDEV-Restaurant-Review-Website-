@@ -3,9 +3,6 @@ import { createRestaurant, getAllRestaurants } from '../controllers/restaurantCo
 
 const router = express.Router();
 
-//---------------------testing--------------------------
 router.post('/', createRestaurant);
 router.get('/', getAllRestaurants);
-//------------------------------------------------------
-
 export default router;

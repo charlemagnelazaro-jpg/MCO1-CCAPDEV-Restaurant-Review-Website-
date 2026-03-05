@@ -3,6 +3,7 @@ import Logo from '../assets/logo_transparent.png'
 import ProfileIcon from '../assets/profile.png'
 import SearchBar from './SearchBar';
 import { Button } from './ui/button';
+import { addRestaurant} from './addRestoButton';
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 import {
@@ -79,8 +80,12 @@ const Navbar = () => {
           </div>
         </Link>
         <div className="flex items-center gap-4">
+          {user?.role === "admin" && (
+            <div className="flex items-center gap-4">
+              {addRestaurant()}
+            </div>
+          )}
           <SearchBar />
-
           {!user ? (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
