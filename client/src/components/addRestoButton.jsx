@@ -11,26 +11,36 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import {useAuth} from '../context/AuthContext';
 
-export function addRestaurant() { 
-  const [open, setOpen] = React.useState(false);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [location, setLocation] = React.useState("");
 
+export function AddRestaurant() { 
+
+const [open, setOpen] = React.useState(false);
+const [isSubmitting, setIsSubmitting] = React.useState(false);
+const [name, setName] = React.useState("");
+const [address, setAddress] = React.useState("");
+const { createRestaurant } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-
-    console.log("Saving to Frontend State:", { name, location });
-
-    setIsSubmitting(false);
-    setOpen(false);
-    setName("");
-    setLocation("");
-    
-    alert(`Successfully added ${name}!`);
+    try{
+      const result = await createRestaurant(name, address);
+      if(result.success){
+        setOpen(false);
+        setName("");
+        setAddress("");
+        alert("Restaurant created successfully!");
+      } else {
+        alert(result.message || "Failed to create restaurant.");
+      }
+    } catch (error) {
+      console.error("Error creating restaurant:", error);
+      alert("An error occurred while creating the restaurant.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -68,10 +78,10 @@ export function addRestaurant() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="location" className="text-sm font-semibold">Location</Label>
+              <Label htmlFor="location" className="text-sm font-semibold">Address</Label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-3 size-4 text-muted-foreground" />
-                <Input id="location" placeholder="Street, City" className="pl-10" required value={location} onChange={(e) => setLocation(e.target.value)} />
+                <Input id="location" placeholder="Street, City" className="pl-10" required value={address} onChange={(e) => setAddress(e.target.value)} />
               </div>
             </div>
           </div>

@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import RestaurantCard from './RestaurantCard'
-import { restaurants } from './restaurant'
 import { Link } from 'react-router-dom';
 import { reviews, reviewsGoodMunch } from './reviews'
 import { ReviewCard } from './components/card-1';
@@ -12,10 +11,17 @@ import {
   CarouselPrevious,
 } from "./components/ui/carousel"
 import HomePic from './assets/home.jpg'
-
+import { useAuth } from './context/AuthContext'; 
+import { useEffect } from 'react';
 function Home() {
-  restaurants.sort((a, b) => b.rating - a.rating);
-  
+  const { restaurants, getAllRestaurants } = useAuth();
+
+  useEffect(() => {
+    getAllRestaurants();
+  }, []);
+
+  const sortedRestaurants = [...restaurants].sort((a, b) => b.avgRating - a.avgRating);
+
   return (
     <div className='m-10 space-y-10'>
       
@@ -43,13 +49,17 @@ function Home() {
         <h1 className="text-2xl font-bold mb-4 px-12">Explore</h1>
         <Carousel className="w-full px-12"> 
           <CarouselContent className="-ml-2">
-            {restaurants.map((restaurant, index) => (
-              <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
-                <Link to={`/review/${encodeURIComponent(restaurant.name)}`}>
-                  <RestaurantCard restaurant={restaurant} />
-                </Link>
-              </CarouselItem>
-            ))}
+            {sortedRestaurants.length > 0 ? (
+              sortedRestaurants.map((restaurant, index) => (
+                <CarouselItem key={restaurant._id || index} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <Link to={`/review/${encodeURIComponent(restaurant.name)}`}>
+                    <RestaurantCard restaurant={restaurant} />
+                  </Link>
+                </CarouselItem>
+              ))
+            ) : (
+              <div className="px-12 py-10 text-gray-400">No Restaurants...</div>
+            )}
           </CarouselContent>
           <CarouselPrevious className="left-0" />
           <CarouselNext className="right-0" />

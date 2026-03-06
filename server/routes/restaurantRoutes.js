@@ -3,6 +3,6 @@ import { createRestaurant, getAllRestaurants } from '../controllers/restaurantCo
 
 const router = express.Router();
 
-router.post('/', createRestaurant);
-router.get('/', getAllRestaurants);
+router.post('/createRestaurant', createRestaurant);
+router.get('/getAllRestaurants', getAllRestaurants);
 export default router;

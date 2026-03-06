@@ -1,3 +1,4 @@
+import { create } from 'framer-motion/m';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
@@ -9,7 +10,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    const [restaurants, setRestaurants] = useState([]);
     useEffect(() => {
         const checkSession = async () => {
             try {
@@ -18,6 +19,8 @@ export const AuthProvider = ({ children }) => {
                 });
                 const data = await res.json();
                 setUser(data.user);
+
+                await getAllRestaurants();
             } catch (error) {
                 console.error('Session check failed:', error);
                 setUser(null);
@@ -137,12 +140,55 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const createRestaurant = async (name , address) => {
+        try {
+            const res = await fetch('/api/restaurant/createRestaurant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, address })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                return { success: true, restaurant: data.restaurant };
+            } else {
+                return { success: false, message: data.message };
+            }
+        } catch (error) {
+            console.error('Create restaurant failed:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    };
+
+    const getAllRestaurants = async() =>{
+        try{
+            const res = await fetch('/api/restaurant/getAllRestaurants',{
+                method: 'GET',
+                headers : {'Content-Type': 'application/json'},
+                credentials: 'include'
+            });
+            const restaurants = await res.json();
+            if(restaurants.success){
+                setRestaurants(restaurants.restaurants);
+                return {success: true, restaurants: restaurants.restaurants}
+            } else {
+                return {success: false, message: restaurants.message}
+            }
+        }catch(error){
+            return {success: false, message: error.message || 'Network error'}
+        }
+    }
+
     const value = {
         user,
+        restaurants,
         login,
         register,
         logout,
         updateProfile,
+        createRestaurant,
+        getAllRestaurants,
         loading
     };
 

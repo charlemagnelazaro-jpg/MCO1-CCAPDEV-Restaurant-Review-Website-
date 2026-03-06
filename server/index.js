@@ -64,7 +64,6 @@ app.use((err, req, res, next) => {
         source: 'Global Error Handler'
     });
 });
-
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

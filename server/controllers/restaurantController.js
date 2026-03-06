@@ -4,11 +4,20 @@ import Restaurant from '../models/Restaurant.js';
 // Create a new restaurant
 export const createRestaurant = async (req, res) => {
     try {
-        const newRestaurant = await Restaurant.create(req.body);
+        const { name, address } = req.body;
         
-        res.status(201).json(newRestaurant);
+        const newRestaurant = await Restaurant.create({ name, address });
+
+        return res.status(201).json({ 
+            success: true, 
+            restaurant: newRestaurant 
+        });
+
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({ 
+            success: false, 
+            message: error.message 
+        });
     }
 };
 
@@ -16,9 +25,12 @@ export const createRestaurant = async (req, res) => {
 export const getAllRestaurants = async (req, res) => {
     try {
         const restaurants = await Restaurant.find();
-        res.status(200).json(restaurants);
+        res.status(200).json({
+            success: true,
+            restaurants: restaurants 
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 //------------------------------------------------------
