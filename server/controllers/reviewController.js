@@ -1,4 +1,5 @@
 import Review from "../models/Review.js";
+import Restaurant from "../models/Restaurant.js";
 import { v2 as cloudinary } from 'cloudinary';
 
 export const postReviews = async (req, res) => {
@@ -9,6 +10,7 @@ export const postReviews = async (req, res) => {
     });
 
     const { user, title, restaurant, rating, comment, images } = req.body;
+    const resto = await Restaurant.findOne({ name: restaurant });
 
     try {
         //upload images to cloudinary
@@ -26,7 +28,7 @@ export const postReviews = async (req, res) => {
         const review = await Review.create({
             user,
             title,
-            restaurant,
+            restaurant: resto._id,
             rating,
             comment,
             images: uploadedImages
@@ -41,8 +43,45 @@ export const postReviews = async (req, res) => {
 export const getAllReviews = async (req, res) => { //for testing
     try {
         const reviews = await Review.find().populate('user', 'name img').sort({ createdAt: -1 });
-
         res.status(200).json(reviews);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export const getReviewsByRestaurant = async (req, res) => {
+    try {
+        const resto = await Restaurant.findOne({ name: req.params.name });
+        if (!resto) return res.status(404).json({ error: "Restaurant not found" });
+
+        const reviews = await Review.find({ restaurant: resto._id }).populate('user', 'name img').sort({ createdAt: -1 });
+        res.status(200).json(reviews);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export const updateVotes = async (req, res) => {
+    try {
+        const review = await Review.findById(req.params.id);
+        if (!review) return res.status(404).json({ error: "Review not found" });
+
+        const userId = req.body.user;
+        const voteType = req.body.voteType;
+
+        //remove user from both arrays to remove previous vote
+        review.upvotes = review.upvotes.filter(id => id.toString() !== userId);
+        review.downvotes = review.downvotes.filter(id => id.toString() !== userId);
+
+        //append to voters array
+        if (voteType === 'upvote') {
+            review.upvotes.push(userId);
+        } else if (voteType === 'downvote') {
+            review.downvotes.push(userId);
+        }
+
+        await review.save();
+        res.status(200).json(review);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -50,4 +89,5 @@ export const getAllReviews = async (req, res) => { //for testing
 
 /*Notes
     recompute the restaurant's avgRating after every change to a review
+
 */

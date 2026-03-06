@@ -5,40 +5,82 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useState } from "react"
 const ReviewCard = React.forwardRef(({
+  id,
   name,
   handle,
   review,
   rating,
   imageUrl,
   reply,
-  className
+  className,
+  upvotes = [],
+  downvotes = [],
+  totalVoteCount = 0,
+  currentUser
 }, ref) => {
 
-  const [voteCount, setVoteCount] = React.useState(0)
-  const [userVote, setUserVote] = React.useState(null)
+  const initialUserVote = React.useMemo(() => {
+    if (!currentUser) return null;
+    const userId = currentUser._id || currentUser.id;
+    if (upvotes.includes(userId)) return "upvote";
+    if (downvotes.includes(userId)) return "downvote";
+    return null;
+  }, [currentUser, upvotes, downvotes]);
+
+  const [voteCount, setVoteCount] = React.useState(totalVoteCount);
+  const [userVote, setUserVote] = React.useState(initialUserVote);
+
+  const handleVoteApiCall = async (newVoteType) => {
+    if (!currentUser) return;
+    const userId = currentUser._id || currentUser.id;
+    try {
+      await fetch(`http://localhost:3000/api/review/vote/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: userId, voteType: newVoteType })
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleUpvote = () => {
+    if (!currentUser) {
+      alert("Please login to vote.");
+      return;
+    }
     if (userVote === "upvote") {
       setVoteCount(voteCount - 1);
       setUserVote(null);
+      handleVoteApiCall("none");
     } else if (userVote === "downvote") {
       setVoteCount(voteCount + 2);
       setUserVote("upvote");
+      handleVoteApiCall("upvote");
     } else {
       setVoteCount(voteCount + 1);
       setUserVote("upvote");
+      handleVoteApiCall("upvote");
     }
   };
+
   const handleDownvote = () => {
+    if (!currentUser) {
+      alert("Please login to vote.");
+      return;
+    }
     if (userVote === "downvote") {
       setVoteCount(voteCount + 1);
       setUserVote(null);
+      handleVoteApiCall("none");
     } else if (userVote === "upvote") {
       setVoteCount(voteCount - 2);
       setUserVote("downvote");
+      handleVoteApiCall("downvote");
     } else {
       setVoteCount(voteCount - 1);
       setUserVote("downvote");
+      handleVoteApiCall("downvote");
     }
   };
   const cardVariants = {

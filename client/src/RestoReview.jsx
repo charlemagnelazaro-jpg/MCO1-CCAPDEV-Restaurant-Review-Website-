@@ -20,7 +20,7 @@ import { toast } from 'sonner'
 
 
 const RestoReview = () => {
-    const { name } = useParams();
+    const { restaurant } = useParams();
     const { user } = useAuth();
     const [rating, setRating] = useState(0);
     const [files, setFiles] = useState([]); //array of images as base64 strings 
@@ -31,29 +31,27 @@ const RestoReview = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    const restaurant = restaurants.find(r => r.name === decodeURIComponent(name));
-
     const fetchReviews = async () => {
         if (!restaurant) return;
         try {
-            const response = await fetch('http://localhost:3000/api/review');
+            const response = await fetch(`http://localhost:3000/api/review/restaurant/${restaurant}`);
             if (response.ok) {
                 const data = await response.json();
 
-                // Filter matching reviews if we have restaurant context
-                const restaurantReviews = data.filter(
-                    review => review.restaurant === restaurant?._id || restaurant?.id || review.restaurant
-                ).map(item => ({
+                const restaurantReviews = data.map(item => ({
                     id: item._id,
                     name: item.user?.name || "Anonymous", // needs populate on backend ideally, but fine as fallback
                     review: item.comment,
                     rating: item.rating,
                     imageUrl: item.user?.img || "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg",
-                    handle: item.title || restaurant?.name,
-                    images: item.images
+                    handle: item.title || restaurant,
+                    images: item.images,
+                    upvotes: item.upvotes || [],
+                    downvotes: item.downvotes || [],
+                    totalVoteCount: item.totalVoteCount || 0
                 }));
 
-                setReviewList(restaurantReviews.reverse()); // Show newest first
+                setReviewList(restaurantReviews);
             }
         } catch (error) {
             console.error("Failed to load reviews:", error);
@@ -128,9 +126,9 @@ const RestoReview = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    user: user._id || user.id || "000000000000000000000000", // Fallback if no user id
+                    user: user._id || user.id,
                     title: title.trim(),
-                    restaurant: restaurant._id || "000000000000000000000000", // Fallback if no restaurant id
+                    restaurant: restaurant,
                     rating: rating,
                     comment: comment.trim(),
                     images: files ? files.map(f => f.base64) : [] // base64 strings
@@ -214,6 +212,7 @@ const RestoReview = () => {
                                 {filteredReviews.map((item) => (
                                     <ReviewCard
                                         key={item.id}
+                                        currentUser={user}
                                         {...item}
                                     />
                                 ))}
