@@ -11,7 +11,6 @@ import {
 } from './components/ui/dropzone'
 import { Button } from '@/components/ui/button';
 import { reviews } from './reviews'
-import { restaurants } from './restaurant'
 import { useParams } from 'react-router-dom'
 import SearchBar from './components/SearchBar'
 import FilterBar from './components/FilterBar'
@@ -28,7 +27,7 @@ const RestoReview = () => {
     const [title, setTitle] = useState("");
     const [comment, setComment] = useState("");
     const [reviewList, setReviewList] = useState(reviews);
-
+    const { restaurants } = useAuth();
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -175,7 +174,7 @@ const RestoReview = () => {
 
                 <div className="mb-8">
                     <div className="h-64 w-full overflow-hidden rounded-xl mb-4">
-                        <img src={getImageUrl(restaurant.image)} className="w-full h-full object-cover" alt={restaurant.name} />
+                        <img src={restaurant.backgroundImg} className="w-full h-full object-cover" alt={restaurant.name} />
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -183,12 +182,12 @@ const RestoReview = () => {
                         <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded border border-yellow-200">
                                 <img src={Star} width='16px' alt="Star" />
-                                <span className="font-semibold">{restaurant.rating.toFixed(1)}</span>
-                                <span className="text-slate-500">(124 reviews)</span>
+                                <span className="font-semibold">{restaurant.avgRating}</span>
+                                <span className="text-slate-500">({restaurant.totalReviews} reviews)</span>
                             </div>
                             <div className="flex items-center gap-1 text-slate-600">
                                 <img src={Pin} width='16px' alt="Location" />
-                                <p>{restaurant.location}, Manila</p>
+                                <p>{restaurant.address}, Manila</p>
                             </div>
                         </div>
                     </div>

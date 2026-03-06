@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
-import { restaurants } from "../restaurant";
 import { Link } from "react-router-dom";
-
-const restaurantNames = restaurants.map(r => r.name);
-restaurantNames.sort();
+import { useAuth } from "../context/AuthContext";
 
 export default function SearchBar() {
+  const { restaurants } = useAuth();
   const [suggestions, setSuggestions] = useState([]);
   const wrapperRef = useRef(null);
-
+  restaurants.sort((a, b) => a.name.localeCompare(b.name));
   useEffect(() => {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
@@ -28,11 +26,11 @@ export default function SearchBar() {
       
       <input
         type="text"
-        onClick={() => setSuggestions(restaurantNames)}
+        onClick={() => setSuggestions(restaurants.map(r => r.name))}
         onChange={(e) => {
            const val = e.target.value;
            if (!val) return setSuggestions([]);
-           setSuggestions(restaurantNames.filter(r => r.toLowerCase().includes(val.toLowerCase())));
+           setSuggestions(restaurants.filter(r => r.name.toLowerCase().includes(val.toLowerCase())).map(r => r.name));
         }}
         className="block w-full pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-md 
                    text-sm placeholder-gray-500

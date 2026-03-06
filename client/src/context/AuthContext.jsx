@@ -151,7 +151,9 @@ export const AuthProvider = ({ children }) => {
             const data = await res.json();
 
             if (data.success) {
+                setRestaurants(prev => [...prev, data.restaurant]);
                 return { success: true, restaurant: data.restaurant };
+                
             } else {
                 return { success: false, message: data.message };
             }
