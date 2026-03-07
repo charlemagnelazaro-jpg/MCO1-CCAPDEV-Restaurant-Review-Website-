@@ -86,12 +86,12 @@ export const updateVotes = async (req, res) => {
         //append to voters array and calculate vote delta
         if (voteType === 'upvote') {
             review.upvotes.push(userId);
-            if (!wasUpvoting) voteDelta = 1; // They wasn't upvoting, now they are
+            if (!wasUpvoting) voteDelta = 1; // they were not upvoting, now they are
         } else if (voteType === 'downvote') {
             review.downvotes.push(userId);
-            if (wasUpvoting) voteDelta = -1; // They were upvoting, now they are downvoting
-        } else if (voteType === 'remove') {
-            if (wasUpvoting) voteDelta = -1; // They were upvoting, now they removed their vote completely
+            if (wasUpvoting) voteDelta = -1; // they were upvoting, now they are downvoting
+        } else if (voteType === 'none') {
+            if (wasUpvoting) voteDelta = -1; // they were upvoting, now they removed their vote
         }
 
         // if the total number of upvotes changed, update the review's user's helpful votes
