@@ -4,8 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useState } from "react"
+import { useAuth } from "../context/AuthContext"
+
 const ReviewCard = React.forwardRef(({
   id,
+  authorId,
   name,
   handle,
   review,
@@ -29,6 +32,14 @@ const ReviewCard = React.forwardRef(({
 
   const [voteCount, setVoteCount] = React.useState(totalVoteCount);
   const [userVote, setUserVote] = React.useState(initialUserVote);
+  const { updateUserHelpfulVotes } = useAuth();
+
+  // Check if the current user is the maker of the review they are voting on
+  const isOwnReview = React.useMemo(() => {
+    if (!currentUser || !authorId) return false;
+    const currentUserId = currentUser._id || currentUser.id;
+    return authorId === currentUserId;
+  }, [currentUser, authorId]);
 
   const handleVoteApiCall = async (newVoteType) => {
     if (!currentUser) return;
@@ -39,6 +50,11 @@ const ReviewCard = React.forwardRef(({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user: userId, voteType: newVoteType })
       });
+
+      if (isOwnReview) {
+        updateUserHelpfulVotes();
+      }
+
     } catch (e) {
       console.error(e);
     }

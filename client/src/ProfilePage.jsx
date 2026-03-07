@@ -87,7 +87,7 @@ const ProfilePage = () => {
     );
   }
 
-   if (user.role === 'admin' && user.role !== 'owner') {
+  if (user.role === 'admin' && user.role !== 'owner') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -153,12 +153,8 @@ const ProfilePage = () => {
                     <span>{user.stats.reviews}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b">
-                    <span className="font-semibold">Photos:</span>
-                    <span>{user.stats.photos}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
-                    <span className="font-semibold">Followers:</span>
-                    <span>{user.stats.followers}</span>
+                    <span className="font-semibold">Upvotes:</span>
+                    <span>{Math.max(0, user.stats.helpfulVotes || 0)}</span>
                   </div>
                 </div>
               </CardContent>

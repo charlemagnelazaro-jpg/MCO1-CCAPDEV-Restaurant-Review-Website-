@@ -1,5 +1,6 @@
 import Review from "../models/Review.js";
 import Restaurant from "../models/Restaurant.js";
+import User from "../models/User.js";
 import { v2 as cloudinary } from 'cloudinary';
 
 export const postReviews = async (req, res) => {
@@ -33,6 +34,10 @@ export const postReviews = async (req, res) => {
             comment,
             images: uploadedImages
         });
+
+        // find user and increament its respective review count
+        await User.findByIdAndUpdate(user, { $inc: { 'stats.reviews': 1 } });
+
         res.status(200).json(review);
     } catch (error) {
         console.error("Cloudinary/DB Error:", error);
@@ -69,15 +74,29 @@ export const updateVotes = async (req, res) => {
         const userId = req.body.user;
         const voteType = req.body.voteType;
 
+        // Track whether this user was already upvoting before they clicked
+        const wasUpvoting = review.upvotes.includes(userId);
+
         //remove user from both arrays to remove previous vote
         review.upvotes = review.upvotes.filter(id => id.toString() !== userId);
         review.downvotes = review.downvotes.filter(id => id.toString() !== userId);
 
-        //append to voters array
+        let voteDelta = 0;
+
+        //append to voters array and calculate vote delta
         if (voteType === 'upvote') {
             review.upvotes.push(userId);
+            if (!wasUpvoting) voteDelta = 1; // They wasn't upvoting, now they are
         } else if (voteType === 'downvote') {
             review.downvotes.push(userId);
+            if (wasUpvoting) voteDelta = -1; // They were upvoting, now they are downvoting
+        } else if (voteType === 'remove') {
+            if (wasUpvoting) voteDelta = -1; // They were upvoting, now they removed their vote completely
+        }
+
+        // if the total number of upvotes changed, update the review's user's helpful votes
+        if (voteDelta !== 0) {
+            await User.findByIdAndUpdate(review.user, { $inc: { 'stats.helpfulVotes': voteDelta } });
         }
 
         await review.save();

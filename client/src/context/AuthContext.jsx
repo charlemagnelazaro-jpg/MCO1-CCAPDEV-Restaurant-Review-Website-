@@ -136,7 +136,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const createRestaurant = async (name , address) => {
+    const createRestaurant = async (name, address) => {
         try {
             const res = await fetch('/api/restaurant/createRestaurant', {
                 method: 'POST',
@@ -149,7 +149,7 @@ export const AuthProvider = ({ children }) => {
             if (data.success) {
                 setRestaurants(prev => [...prev, data.restaurant]);
                 return { success: true, restaurant: data.restaurant };
-                
+
             } else {
                 return { success: false, message: data.message };
             }
@@ -159,22 +159,50 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const getAllRestaurants = async() =>{
-        try{
-            const res = await fetch('/api/restaurant/getAllRestaurants',{
+    const getAllRestaurants = async () => {
+        try {
+            const res = await fetch('/api/restaurant/getAllRestaurants', {
                 method: 'GET',
-                headers : {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
             });
             const restaurants = await res.json();
-            if(restaurants.success){
+            if (restaurants.success) {
                 setRestaurants(restaurants.restaurants);
-                return {success: true, restaurants: restaurants.restaurants}
+                return { success: true, restaurants: restaurants.restaurants }
             } else {
-                return {success: false, message: restaurants.message}
+                return { success: false, message: restaurants.message }
             }
-        }catch(error){
-            return {success: false, message: error.message || 'Network error'}
+        } catch (error) {
+            return { success: false, message: error.message || 'Network error' }
+        }
+    }
+
+    const incrementUserReviewCount = () => {
+        if (user && user.stats) {
+            setUser({
+                ...user,
+                stats: {
+                    ...user.stats,
+                    reviews: user.stats.reviews + 1
+                }
+            });
+        }
+    };
+
+    const updateUserHelpfulVotes = async () => {
+        try {
+            const res = await fetch('/api/check-session', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            const data = await res.json();
+            if (res.ok && data.user) {
+                setUser(data.user);
+            }
+        } catch (error) {
+            console.error('Failed to sync helpful votes:', error);
         }
     }
 
@@ -187,6 +215,8 @@ export const AuthProvider = ({ children }) => {
         updateProfile,
         createRestaurant,
         getAllRestaurants,
+        incrementUserReviewCount,
+        updateUserHelpfulVotes,
         loading
     };
 

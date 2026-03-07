@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'admin','owner'],
+        enum: ['user', 'admin', 'owner'],
         default: 'user'
     },
     img: {
@@ -37,8 +37,7 @@ const userSchema = new mongoose.Schema({
     },
     stats: {
         reviews: { type: Number, default: 0 },
-        photos: { type: Number, default: 0 },
-        followers: { type: Number, default: 0 }
+        helpfulVotes: { type: Number, default: 0 }
     },
 }, {
     timestamps: true

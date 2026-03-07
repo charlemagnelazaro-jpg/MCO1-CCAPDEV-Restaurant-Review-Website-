@@ -22,7 +22,7 @@ const seedUsers = [
         location: 'New York City, NY',
         bio: 'Food enthusiast exploring local gems. Always looking for the perfect taco.',
         img: 'https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg',
-        stats: { reviews: 3, photos: 115, followers: 88 }
+        stats: { reviews: 0, helpfulVotes: 0 }
     },
     {
         email: 'miko@example.com',
@@ -31,7 +31,7 @@ const seedUsers = [
         location: 'Taft Avenue, Manila',
         bio: "DLSU '24 | ID 120. Certified food critic and campus foodie. If it's near Taft, I've tried it.",
         img: 'https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg',
-        stats: { reviews: 4, photos: 72, followers: 134 }
+        stats: { reviews: 0, helpfulVotes: 0 }
     },
     {
         email: 'chloe@example.com',
@@ -40,7 +40,7 @@ const seedUsers = [
         location: 'Makati City, Philippines',
         bio: 'Lia-Com student by day, foodie by night. Always on the hunt for hidden food gems around the metro.',
         img: 'https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg',
-        stats: { reviews: 3, photos: 45, followers: 67 }
+        stats: { reviews: 0, helpfulVotes: 0 }
     },
     {
         email: 'zark@example.com',
@@ -49,7 +49,7 @@ const seedUsers = [
         location: 'Quezon City, Philippines',
         bio: "If the burger is bigger than my face, I'm interested. Professional eater, amateur reviewer. Panalo!",
         img: 'https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg',
-        stats: { reviews: 3, photos: 200, followers: 312 }
+        stats: { reviews: 0, helpfulVotes: 0 }
     },
     {
         email: 'sam@example.com',
@@ -58,7 +58,7 @@ const seedUsers = [
         location: 'Pasay City, Philippines',
         bio: "Musician, coffee addict, and part-time food blogger. I eat with my ears first — if the vibe is right, the food tastes better.",
         img: 'https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg',
-        stats: { reviews: 3, photos: 58, followers: 91 }
+        stats: { reviews: 0, helpfulVotes: 0 }
     },
     {
         email: 'admin@example.com',
@@ -128,7 +128,7 @@ const seed = async () => {
             console.log(`Seeded user: ${user.name} (${user.email})`);
         }
 
-        for (const restaurantData of seedRestaurants){
+        for (const restaurantData of seedRestaurants) {
             const restaurant = new Restaurant(restaurantData)
             await restaurant.save();
             console.log(`Seeded Restaurant: ${restaurant.name}`);

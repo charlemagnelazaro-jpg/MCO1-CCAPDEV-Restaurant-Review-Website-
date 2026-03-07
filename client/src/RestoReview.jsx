@@ -21,13 +21,12 @@ import { toast } from 'sonner'
 
 const RestoReview = () => {
     const { restaurant } = useParams();
-    const { user } = useAuth();
+    const { user, restaurants, incrementUserReviewCount } = useAuth();
     const [rating, setRating] = useState(0);
     const [files, setFiles] = useState([]); //array of images as base64 strings 
     const [title, setTitle] = useState("");
     const [comment, setComment] = useState("");
     const [reviewList, setReviewList] = useState(reviews);
-    const { restaurants } = useAuth();
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -40,6 +39,7 @@ const RestoReview = () => {
 
                 const restaurantReviews = data.map(item => ({
                     id: item._id,
+                    authorId: item.user?._id || item.user?.id || item.user,
                     name: item.user?.name || "Anonymous", // needs populate on backend ideally, but fine as fallback
                     review: item.comment,
                     rating: item.rating,
@@ -144,6 +144,8 @@ const RestoReview = () => {
                 toast.success("Review posted successfully!");
                 // Trigger refetch from backend instead of local append to guarantee DB state
                 fetchReviews();
+                // need this to update the review count without having to refresh
+                incrementUserReviewCount();
 
                 //Revert to default
                 setRating(0);
