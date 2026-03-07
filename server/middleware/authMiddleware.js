@@ -20,8 +20,8 @@ export const isAuthenticated = async (req, res, next) => {
 };
 
 export const isNotAdmin = async (req, res, next) => {
-    try{
-        if (req.session.user.role !== 'admin') {
+    try {
+        if (req.user.role !== 'admin') {
             return next();
         }
         return res.status(403).json({ success: false, message: 'Forbidden' });

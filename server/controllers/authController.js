@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import { v2 as cloudinary } from 'cloudinary';
 
 // POST register new user
 export const register = async (req, res) => {
@@ -98,11 +99,24 @@ export const updateProfile = async (req, res) => {
 
         const updateData = { name, location, bio };
 
-        // if pic was uploaded, convert to base 64
+        // if pic was uploaded, upload to cloudinary
         if (req.files && req.files.avatar) {
+            cloudinary.config({
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET,
+            });
+
             const avatar = req.files.avatar;
             const base64 = `data:${avatar.mimetype};base64,${avatar.data.toString('base64')}`;
-            updateData.img = base64;
+
+            const result = await cloudinary.uploader.upload(base64, {
+                folder: 'archereats_profiles',
+                transformation: [
+                    { width: 256, height: 256, crop: 'fill', gravity: 'face', quality: 'auto', fetch_format: 'auto' }
+                ]
+            });
+            updateData.img = result.secure_url;
         }
 
         const updatedUser = await User.findByIdAndUpdate(
