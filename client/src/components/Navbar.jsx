@@ -34,7 +34,7 @@ const Navbar = () => {
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regConfirm, setRegConfirm] = useState("");
-  const [registerAsRestaurant, setRegisterAsRestaurant] = useState(false);
+  const [registerAsOwner, setRegisterAsOwner] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -56,13 +56,13 @@ const Navbar = () => {
       setError("Passwords do not match.");
       return;
     }
-    const result = await register(regEmail, regPassword, registerAsRestaurant);
+    const result = await register(regEmail, regPassword, registerAsOwner);
     if (result.success) {
       setIsOpen(false);
       setRegEmail("");
       setRegPassword("");
       setRegConfirm("");
-      setRegisterAsRestaurant(false);
+      setRegisterAsOwner(false);
       setError("");
     } else {
       setError(result.message);
@@ -214,17 +214,17 @@ const Navbar = () => {
                       </div>
                       <label
                         htmlFor="register-restaurant-account"
-                        className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm cursor-pointer transition-colors ${registerAsRestaurant ? 'bg-primary/5 border-primary/50' : 'hover:bg-gray-50'}`}
+                        className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm cursor-pointer transition-colors ${registerAsOwner ? 'bg-primary/5 border-primary/50' : 'hover:bg-gray-50'}`}
                       >
                         <Checkbox
                           id="register-restaurant-account"
-                          checked={registerAsRestaurant}
-                          onCheckedChange={(checked) => setRegisterAsRestaurant(checked === true)}
+                          checked={registerAsOwner}
+                          onCheckedChange={(checked) => setRegisterAsOwner(checked === true)}
                           className="mt-1"
                         />
                         <div className="space-y-1 leading-none">
                           <p className="text-sm font-medium leading-none">
-                            Register as a Restaurant
+                            Register as a Restaurant Owner
                           </p>
                           <p className="text-sm text-gray-500">
                             Create a page for your restaurant to interact with diners.

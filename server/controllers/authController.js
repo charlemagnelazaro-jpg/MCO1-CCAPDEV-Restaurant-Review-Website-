@@ -4,7 +4,7 @@ import { v2 as cloudinary } from 'cloudinary';
 // POST register new user
 export const register = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role} = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -13,7 +13,8 @@ export const register = async (req, res) => {
 
         const user = new User({
             email,
-            password
+            password,
+            role
         });
 
         await user.save();

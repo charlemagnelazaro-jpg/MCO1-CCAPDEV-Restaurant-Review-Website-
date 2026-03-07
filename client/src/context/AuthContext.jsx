@@ -60,17 +60,13 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (email, password, isRestaurant = false) => {
+    const register = async (email, password, isOwner) => {
         try {
-
-            // WILL CHECK WHETHER THE USER IS REGISTERING AS A RESTAURANT OR NOT
-            // HAYDEN MAKE ROUTES LIKE THIS
-            const endpoint = isRestaurant ? '/api/restaurant/register' : '/api/register';
-            const res = await fetch(endpoint, {
+            const res = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password, role: isOwner ? 'owner' : 'user' })
             });
             const data = await res.json();
 
