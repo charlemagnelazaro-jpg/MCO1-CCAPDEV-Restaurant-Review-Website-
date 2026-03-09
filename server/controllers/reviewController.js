@@ -35,13 +35,35 @@ export const postReviews = async (req, res) => {
             images: uploadedImages
         });
 
-        // find user and increament its respective review count
+        //find user and increament its respective review count
         await User.findByIdAndUpdate(user, { $inc: { 'stats.reviews': 1 } });
 
         res.status(200).json(review);
     } catch (error) {
         console.error("Cloudinary/DB Error:", error);
         res.status(400).json({ error: error.message });
+    }
+}
+
+export const updateAvgRating = async (req, res) => {
+    try {
+        const resto = await Restaurant.findOne({ name: req.params.id });
+        if (!resto) return res.status(404).json({ error: "Restaurant not found" });
+
+        const allReviews = await Review.find({ restaurant: resto._id });
+        const newTotalReviews = allReviews.length;
+        const newAvgRating = newTotalReviews > 0
+            ? Math.round((allReviews.reduce((sum, rev) => sum + rev.rating, 0) / newTotalReviews) * 10) / 10
+            : 0;
+
+        await Restaurant.findByIdAndUpdate(resto._id, {
+            avgRating: newAvgRating,
+            totalReviews: newTotalReviews
+        });
+
+        res.status(200).json({ avgRating: newAvgRating, totalReviews: newTotalReviews });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 }
 

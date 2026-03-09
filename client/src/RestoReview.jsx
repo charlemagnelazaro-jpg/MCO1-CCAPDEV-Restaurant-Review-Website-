@@ -27,7 +27,6 @@ const RestoReview = () => {
     const [title, setTitle] = useState("");
     const [comment, setComment] = useState("");
     const [reviewList, setReviewList] = useState(reviews);
-
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedReview, setSelectedReview] = useState(null);
     const [replyText, setReplyText] = useState("");
@@ -42,7 +41,7 @@ const RestoReview = () => {
                 const restaurantReviews = data.map(item => ({
                     id: item._id,
                     authorId: item.user?._id || item.user?.id || item.user,
-                    name: item.user?.name || "Anonymous", // needs populate on backend ideally, but fine as fallback
+                    name: item.user?.name,
                     review: item.comment,
                     rating: item.rating,
                     imageUrl: item.user?.img || "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg",
@@ -61,7 +60,7 @@ const RestoReview = () => {
         }
     };
 
-    // Fetch reviews from the backend on load
+    //fetch reviews from the backend on load
     React.useEffect(() => {
         fetchReviews();
     }, [restaurant]);
@@ -77,7 +76,7 @@ const RestoReview = () => {
 
     //function for drag and drop files
     const handleDrop = async (acceptedFiles) => {
-        //convert the files to base664
+        //convert the files to base64
         const base64Promises = acceptedFiles.map((file) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -147,9 +146,17 @@ const RestoReview = () => {
                 toast.success("Review posted successfully!");
                 // Trigger refetch from backend instead of local append to guarantee DB state
                 fetchReviews();
-                // need this to update the review count without having to refresh
+                // update the review count without having to refresh
                 incrementUserReviewCount();
-
+                //update average rating
+                const updateAvgRatingResponse = await fetch(`http://localhost:3000/api/review/updateAvgRating/${restaurant}`, {
+                    method: 'PATCH',
+                });
+                if (!updateAvgRatingResponse.ok) {
+                    const errorData = await updateAvgRatingResponse.json();
+                    console.error("Backend error:", errorData);
+                    toast.error("Failed to update average rating: " + (errorData.error || 'Unknown error'));
+                }
                 //Revert to default
                 setRating(0);
                 setTitle("");
@@ -207,26 +214,34 @@ const RestoReview = () => {
         return new URL(path, import.meta.url).href;
     };
 
+    const restaurantObj = restaurants?.find((r) => r.name === restaurant) || {
+        name: restaurant,
+        backgroundImg: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+        avgRating: 0,
+        totalReviews: 0,
+        address: "Loading..."
+    };
+
     return (
         <form onSubmit={handlePostReview}>
             <div className="max-w-5xl mx-auto p-6 font-sans text-slate-800">
 
                 <div className="mb-8">
                     <div className="h-64 w-full overflow-hidden rounded-xl mb-4">
-                        <img src={restaurant.backgroundImg} className="w-full h-full object-cover" alt={restaurant.name} />
+                        <img src={restaurantObj.backgroundImg} className="w-full h-full object-cover" alt={restaurantObj.name} />
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <h1 className="text-3xl font-bold">{restaurant.name}</h1>
+                        <h1 className="text-3xl font-bold">{restaurantObj.name}</h1>
                         <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded border border-yellow-200">
                                 <img src={Star} width='16px' alt="Star" />
-                                <span className="font-semibold">{restaurant.avgRating}</span>
-                                <span className="text-slate-500">({restaurant.totalReviews} reviews)</span>
+                                <span className="font-semibold">{restaurantObj.avgRating}</span>
+                                <span className="text-slate-500">({restaurantObj.totalReviews} reviews)</span>
                             </div>
                             <div className="flex items-center gap-1 text-slate-600">
                                 <img src={Pin} width='16px' alt="Location" />
-                                <p>{restaurant.address}, Manila</p>
+                                <p>{restaurantObj.address}</p>
                             </div>
                         </div>
                     </div>

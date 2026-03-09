@@ -5,6 +5,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
 
 const ReviewCard = React.forwardRef(({
   id,
@@ -15,6 +22,7 @@ const ReviewCard = React.forwardRef(({
   rating,
   imageUrl,
   reply,
+  images = [],
   className,
   upvotes = [],
   downvotes = [],
@@ -23,6 +31,8 @@ const ReviewCard = React.forwardRef(({
   isSelected,
   onSelect
 }, ref) => {
+
+  const [expandedImage, setExpandedImage] = React.useState(null);
 
   const initialUserVote = React.useMemo(() => {
     if (!currentUser) return null;
@@ -148,7 +158,7 @@ const ReviewCard = React.forwardRef(({
             <h3 id="review-author" className="text-lg font-semibold leading-tight">
               {name}
             </h3>
-            <p className="text-sm text-muted-foreground">{handle}</p>
+            <p className="text-md font-bold">{handle}</p>
           </div>
         </div>
 
@@ -166,7 +176,69 @@ const ReviewCard = React.forwardRef(({
         <p id="review-content" className="mt-4 text-sm leading-relaxed text-foreground/90 relative z-10">
           {review}
         </p>
+
+        {images && images.length > 0 && (
+          <div className="mt-4 relative z-10 w-full pl-6 pr-6">
+            <Carousel opts={{ align: "start" }} className="w-full max-w-sm mx-auto">
+              <CarouselContent>
+                {images.map((imgSrc, index) => (
+                  <CarouselItem key={index} className="basis-1/2 md:basis-1/3">
+                    <div className="p-1">
+                      <img
+                        src={imgSrc}
+                        alt={`Review attachment ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-md cursor-pointer border hover:opacity-90 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedImage(imgSrc);
+                        }}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {images.length > 2 && (
+                <>
+                  <CarouselPrevious className="w-6 h-6 -left-3" />
+                  <CarouselNext className="w-6 h-6 -right-3" />
+                </>
+              )}
+            </Carousel>
+          </div>
+        )}
       </div>
+
+      <AnimatePresence>
+        {expandedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            onClick={(e) => {
+              e.stopPropagation();
+              setExpandedImage(null);
+            }}
+          >
+            <div className="relative max-w-4xl max-h-[90vh] w-full">
+              <img
+                src={expandedImage}
+                alt="Expanded review image"
+                className="w-full h-full object-contain rounded-lg"
+              />
+              <button
+                className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedImage(null);
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {reply && (
