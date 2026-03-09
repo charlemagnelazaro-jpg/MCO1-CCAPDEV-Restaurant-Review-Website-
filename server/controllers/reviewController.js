@@ -106,6 +106,27 @@ export const updateVotes = async (req, res) => {
     }
 }
 
+export const addReplyToReview = async (req, res) => {
+    try {
+        const review = await Review.findById(req.params.id);
+        if (!review) return res.status(404).json({ error: "Review not found" });
+
+        // check if user is actually an owner
+        const user = await User.findById(req.body.userId);
+        if (!user || user.role !== 'owner') return res.status(403).json({ error: "Unauthorized" });
+
+        review.reply = {
+            text: req.body.replyText,
+            createdAt: new Date()
+        };
+
+        await review.save();
+        res.status(200).json(review);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 /*Notes
     recompute the restaurant's avgRating after every change to a review
 

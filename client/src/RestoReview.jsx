@@ -29,6 +29,8 @@ const RestoReview = () => {
     const [reviewList, setReviewList] = useState(reviews);
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedReview, setSelectedReview] = useState(null);
+    const [replyText, setReplyText] = useState("");
 
     const fetchReviews = async () => {
         if (!restaurant) return;
@@ -48,7 +50,8 @@ const RestoReview = () => {
                     images: item.images,
                     upvotes: item.upvotes || [],
                     downvotes: item.downvotes || [],
-                    totalVoteCount: item.totalVoteCount || 0
+                    totalVoteCount: item.totalVoteCount || 0,
+                    reply: item.reply?.text
                 }));
 
                 setReviewList(restaurantReviews);
@@ -164,6 +167,42 @@ const RestoReview = () => {
         }
     };
 
+    const handlePostReply = async (e) => {
+        e.preventDefault();
+
+        if (!selectedReview) return;
+        if (!replyText.trim()) {
+            toast.error("Please write a reply.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/review/reply/${selectedReview}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: user._id || user.id,
+                    replyText: replyText.trim()
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                toast.error("Failed to post reply: " + (errorData.error || 'Unknown error'));
+            } else {
+                toast.success("Reply posted successfully!");
+                fetchReviews();
+                setReplyText("");
+                setSelectedReview(null);
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            toast.error("An error occurred while posting reply.");
+        }
+    };
+
     const getImageUrl = (path) => {
         return new URL(path, import.meta.url).href;
     };
@@ -197,7 +236,9 @@ const RestoReview = () => {
 
                     <div className="md:col-span-2 flex-1 space-y-6">
                         <div className="flex items-center justify-between border-b pb-2">
-                            <h2 className="text-xl font-bold w-full">Community Reviews</h2>
+                            <h2 className="text-xl font-bold w-full">
+                                {user?.role === 'owner' ? "Select a Review to Reply" : "Community Reviews"}
+                            </h2>
 
                             <div className='flex items-center gap-4'>
                                 <FilterBar onChange={(e) => setSearchQuery(e.target.value)} />
@@ -215,6 +256,8 @@ const RestoReview = () => {
                                     <ReviewCard
                                         key={item.id}
                                         currentUser={user}
+                                        isSelected={selectedReview === item.id}
+                                        onSelect={setSelectedReview}
                                         {...item}
                                     />
                                 ))}
@@ -223,64 +266,105 @@ const RestoReview = () => {
                     </div>
 
                     <div className="w-full md:w-80">
-                        <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
-                            <h2 className="text-lg font-bold mb-4">Write a Review</h2>
+                        {user?.role === 'owner' ? ( //user is an owner
+                            <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
+                                <h2 className="text-lg font-bold mb-4">
+                                    {selectedReview ? `Reply to ${reviewList.find(r => r.id === selectedReview)?.name}` : "Select a Review"}
+                                </h2>
 
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1.5">Rate</label>
-                                    <div className="flex justify-start">
-                                        <Rating
-                                            editable={true}
-                                            rating={rating}
-                                            onRatingChange={setRating}
+                                <div className="space-y-4">
+                                    {selectedReview && (
+                                        <div className="bg-green-50 p-4 rounded-lg border border-green-200 text-sm mb-4">
+                                            <p className="text-green-800 font-bold mb-1 text-[10px] uppercase tracking-wider">Replying to:</p>
+                                            <p className="text-slate-600 italic leading-relaxed">
+                                                "{reviewList.find(r => r.id === selectedReview)?.review}"
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Your Reply</label>
+                                        <Textarea //reply input
+                                            className="min-h-[150px]"
+                                            placeholder="Write your response to this review..."
+                                            value={replyText}
+                                            onChange={(e) => setReplyText(e.target.value)}
+                                            disabled={!selectedReview}
                                         />
                                     </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1.5">Title</label>
-                                    <Textarea
-                                        className="min-h-[50px]"
-                                        placeholder='Title'
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                    />
-                                </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium mb-1.5">Comments</label>
-                                    <Textarea
-                                        className="min-h-[100px]"
-                                        placeholder='Type your feedback here...'
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium mb-1.5">Add Photos</label>
-                                    <Dropzone
-                                        maxSize={1024 * 1024 * 10}
-                                        minSize={1024}
-                                        maxFiles={5}
-                                        accept={{ 'image/*': [] }}
-                                        onDrop={handleDrop}
-                                        src={files}
-                                        onError={console.error}
+                                    <Button
+                                        className='w-full bg-green-600 hover:bg-green-700 text-white disabled:bg-green-400 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+                                        type="button"
+                                        onClick={handlePostReply}
+                                        disabled={!selectedReview || !replyText.trim()}
                                     >
-                                        <DropzoneEmptyState />
-                                        <DropzoneContent />
-                                    </Dropzone>
-                                </div>
+                                        <img src={Star} className="w-4 h-4 brightness-0 invert opacity-80" alt="" />
+                                        Post Reply
+                                    </Button>
 
-                                <Button
-                                    className='w-full bg-green-600 hover:bg-green-700 text-white'
-                                    type="submit"
-                                >
-                                    Post Review
-                                </Button>
+                                </div>
                             </div>
-                        </div>
+                        ) : (//user is not an owner
+                            <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
+                                <h2 className="text-lg font-bold mb-4">Write a Review</h2>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Rate</label>
+                                        <div className="flex justify-start">
+                                            <Rating
+                                                editable={true}
+                                                rating={rating}
+                                                onRatingChange={setRating}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Title</label>
+                                        <Textarea
+                                            className="min-h-[50px]"
+                                            placeholder='Title'
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Comments</label>
+                                        <Textarea
+                                            className="min-h-[100px]"
+                                            placeholder='Type your feedback here...'
+                                            value={comment}
+                                            onChange={(e) => setComment(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium mb-1.5">Add Photos</label>
+                                        <Dropzone
+                                            maxSize={1024 * 1024 * 10}
+                                            minSize={1024}
+                                            maxFiles={5}
+                                            accept={{ 'image/*': [] }}
+                                            onDrop={handleDrop}
+                                            src={files}
+                                            onError={console.error}
+                                        >
+                                            <DropzoneEmptyState />
+                                            <DropzoneContent />
+                                        </Dropzone>
+                                    </div>
+
+                                    <Button
+                                        className='w-full bg-green-600 hover:bg-green-700 text-white'
+                                        type="submit"
+                                    >
+                                        Post Review
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

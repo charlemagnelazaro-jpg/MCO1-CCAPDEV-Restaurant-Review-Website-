@@ -5,7 +5,7 @@ const reviewSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: [true, 'A review must have an author.']
-    }, 
+    },
     title: {
         type: String,
         required: [true, 'Please provide a title for your review.'],
@@ -29,8 +29,12 @@ const reviewSchema = new mongoose.Schema({
         trim: true
     },
     images: {
-        type: [String], 
+        type: [String],
         default: []
+    },
+    reply: {
+        text: { type: String, default: "" }, // Old reviews will now return an empty string
+        createdAt: { type: Date }
     },
     upvotes: [
         {

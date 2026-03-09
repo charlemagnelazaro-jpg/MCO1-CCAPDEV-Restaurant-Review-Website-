@@ -19,7 +19,9 @@ const ReviewCard = React.forwardRef(({
   upvotes = [],
   downvotes = [],
   totalVoteCount = 0,
-  currentUser
+  currentUser,
+  isSelected,
+  onSelect
 }, ref) => {
 
   const initialUserVote = React.useMemo(() => {
@@ -117,13 +119,18 @@ const ReviewCard = React.forwardRef(({
     }
   };
 
+  const isOwner = currentUser?.role === 'owner';
+
   return (
     <motion.div
       ref={ref}
       className={cn(
-        "bg-card text-card-foreground border rounded-xl p-6 shadow-sm w-full max-w-md h-fit",
+        "bg-card text-card-foreground border rounded-xl p-6 shadow-sm w-full max-w-md h-fit relative",
+        isOwner && isSelected ? "border-green-500 bg-green-50" : "",
+        isOwner && !isSelected ? "cursor-pointer hover:border-green-500/50 transition-colors" : "",
         className
       )}
+      onClick={() => isOwner && onSelect && onSelect(id)}
       variants={cardVariants}
       initial="hidden"
       animate="visible"
@@ -212,6 +219,12 @@ const ReviewCard = React.forwardRef(({
         <time className="text-[11px] text-muted-foreground uppercase font-medium">
           2 days ago
         </time>
+
+        {isOwner && isSelected && (
+          <div className="absolute bottom-2 right-6 text-green-600 text-sm font-semibold flex items-center gap-1">
+            <div className="w-2.5 h-2.5 bg-green-600 rounded-sm"></div> Selected
+          </div>
+        )}
       </div>
     </motion.div>
   );
