@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import RestaurantCard from './RestaurantCard'
 import { Link } from 'react-router-dom';
-import { reviews, reviewsGoodMunch } from './reviews'
 import { ReviewCard } from './components/card-1';
 import {
   Carousel,
@@ -14,10 +13,40 @@ import HomePic from './assets/home.jpg'
 import { useAuth } from './context/AuthContext'; 
 import { useEffect } from 'react';
 function Home() {
-  const { restaurants, getAllRestaurants } = useAuth();
+  const { user, restaurants, getAllRestaurants } = useAuth();
+  const [reviewList, setReviewList] = useState([]);
 
+  const fetchReviews = async () => {
+          try {
+              const response = await fetch(`http://localhost:3000/api/review/`);
+              if (response.ok) {
+                  const data = await response.json();
+  
+                  const reviews = data.map(item => ({
+                      id: item._id,
+                      authorId: item.user?._id || item.user?.id || item.user,
+                      name: item.user?.name,
+                      review: item.comment,
+                      rating: item.rating,
+                      imageUrl: item.user?.img || "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg",
+                      handle: item.title || restaurant,
+                      images: item.images,
+                      upvotes: item.upvotes || [],
+                      downvotes: item.downvotes || [],
+                      totalVoteCount: item.totalVoteCount || 0,
+                      reply: item.reply?.text
+                  }));
+  
+                  setReviewList(reviews);
+              }
+          } catch (error) {
+              console.error("Failed to load reviews:", error);
+          }
+      };
+  
   useEffect(() => {
     getAllRestaurants();
+    fetchReviews();
   }, []);
 
   const sortedRestaurants = [...restaurants].sort((a, b) => b.avgRating - a.avgRating);
@@ -70,14 +99,11 @@ function Home() {
         <h1 className="text-2xl font-bold mb-4 px-12">Recent Reviews</h1>
         <Carousel className="w-full px-12">
           <CarouselContent className="-ml-4">
-            {reviewsGoodMunch.map((item) => (
+            {reviewList.map((item) => (
               <CarouselItem key={item.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                 <ReviewCard
-                  name={item.name}
-                  handle={item.handle}
-                  review={item.review}
-                  rating={item.rating}
-                  imageUrl={item.imageUrl}
+                  currentUser={user}
+                  {...item}
                 />
               </CarouselItem>
             ))}

@@ -10,7 +10,6 @@ import {
     DropzoneEmptyState,
 } from './components/ui/dropzone'
 import { Button } from '@/components/ui/button';
-import { reviews } from './reviews'
 import { useParams } from 'react-router-dom'
 import SearchBar from './components/SearchBar'
 import FilterBar from './components/FilterBar'
@@ -26,7 +25,7 @@ const RestoReview = () => {
     const [files, setFiles] = useState([]); //array of images as base64 strings 
     const [title, setTitle] = useState("");
     const [comment, setComment] = useState("");
-    const [reviewList, setReviewList] = useState(reviews);
+    const [reviewList, setReviewList] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedReview, setSelectedReview] = useState(null);
     const [replyText, setReplyText] = useState("");
@@ -144,7 +143,7 @@ const RestoReview = () => {
             } else {
                 const savedReview = await response.json();
                 toast.success("Review posted successfully!");
-                // Trigger refetch from backend instead of local append to guarantee DB state
+                // trigger refetch from backend instead of local append to guarantee DB state
                 fetchReviews();
                 // update the review count without having to refresh
                 incrementUserReviewCount();

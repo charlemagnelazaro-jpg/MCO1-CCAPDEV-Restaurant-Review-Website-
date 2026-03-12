@@ -32,6 +32,8 @@ const ReviewCard = React.forwardRef(({
   onSelect
 }, ref) => {
 
+  
+
   const [expandedImage, setExpandedImage] = React.useState(null);
 
   const initialUserVote = React.useMemo(() => {
@@ -46,7 +48,7 @@ const ReviewCard = React.forwardRef(({
   const [userVote, setUserVote] = React.useState(initialUserVote);
   const { updateUserHelpfulVotes } = useAuth();
 
-  // Check if the current user is the maker of the review they are voting on
+  //check if the current user is the maker of the review they are voting on
   const isOwnReview = React.useMemo(() => {
     if (!currentUser || !authorId) return false;
     const currentUserId = currentUser._id || currentUser.id;
