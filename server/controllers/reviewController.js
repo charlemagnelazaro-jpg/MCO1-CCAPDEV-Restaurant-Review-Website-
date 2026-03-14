@@ -78,7 +78,7 @@ export const getAllReviews = async (req, res) => { //for testing
 
 export const getRecentReviews = async (req, res) => { //get 10 latest reviews
     try {
-        const reviews = await Review.find().populate('user', 'name img').sort({ createdAt: -1 }).limit(10);
+        const reviews = await Review.find().populate('user', 'name img').populate('restaurant', 'name').sort({ createdAt: -1 }).limit(10);
         res.status(200).json(reviews);
     } catch (error) {
         res.status(500).json({ error: error.message });

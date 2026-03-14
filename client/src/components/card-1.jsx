@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, ChevronUp, Star, Reply } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -16,6 +17,7 @@ import {
 const ReviewCard = React.forwardRef(({
   id,
   authorId,
+  restaurant,
   name,
   handle,
   review,
@@ -29,7 +31,8 @@ const ReviewCard = React.forwardRef(({
   totalVoteCount = 0,
   currentUser,
   isSelected,
-  onSelect
+  onSelect,
+  inHome = false
 }, ref) => {
 
   
@@ -133,7 +136,16 @@ const ReviewCard = React.forwardRef(({
 
   const isOwner = currentUser?.role === 'owner';
 
+  const displayRestaurant = () =>{
+    if (inHome){
+      return <div className="text-lg text-muted-foreground uppercase font-medium mb-2">
+          {restaurant}
+        </div>
+    }
+  }
+
   return (
+    
     <motion.div
       ref={ref}
       className={cn(
@@ -149,6 +161,7 @@ const ReviewCard = React.forwardRef(({
       role="article"
       aria-labelledby="review-author"
     >
+      {displayRestaurant()}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <img
@@ -210,37 +223,40 @@ const ReviewCard = React.forwardRef(({
         )}
       </div>
 
-      <AnimatePresence>
-        {expandedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-            onClick={(e) => {
-              e.stopPropagation();
-              setExpandedImage(null);
-            }}
-          >
-            <div className="relative max-w-4xl max-h-[90vh] w-full">
-              <img
-                src={expandedImage}
-                alt="Expanded review image"
-                className="w-full h-full object-contain rounded-lg"
-              />
-              <button
-                className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setExpandedImage(null);
-                }}
-              >
-                ✕
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {document && createPortal(
+        <AnimatePresence>
+          {expandedImage && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedImage(null);
+              }}
+            >
+              <div className="relative max-w-4xl max-h-[90vh] w-full">
+                <img
+                  src={expandedImage}
+                  alt="Expanded review image"
+                  className="w-full h-full object-contain rounded-lg"
+                />
+                <button
+                  className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExpandedImage(null);
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       <AnimatePresence>
         {reply && (

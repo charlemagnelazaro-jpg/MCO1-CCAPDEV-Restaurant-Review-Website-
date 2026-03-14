@@ -25,6 +25,7 @@ function Home() {
                   const reviews = data.map(item => ({
                       id: item._id,
                       authorId: item.user?._id || item.user?.id || item.user,
+                      restaurant: item.restaurant?.name,
                       name: item.user?.name,
                       review: item.comment,
                       rating: item.rating,
@@ -104,6 +105,7 @@ function Home() {
                 <ReviewCard
                   currentUser={user}
                   {...item}
+                  inHome={true}
                 />
               </CarouselItem>
             ))}
