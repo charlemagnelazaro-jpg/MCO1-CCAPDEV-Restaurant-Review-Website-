@@ -39,6 +39,13 @@ const userSchema = new mongoose.Schema({
         reviews: { type: Number, default: 0 },
         helpfulVotes: { type: Number, default: 0 }
     },
+    restaurantID:{
+        type: mongoose.Schema.Types.ObjectId,
+        required: function isOwner(){
+            return this.role === "owner" ? true : false
+        }
+    }
+
 }, {
     timestamps: true
 });

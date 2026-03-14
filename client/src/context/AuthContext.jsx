@@ -60,13 +60,17 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (email, password, isOwner) => {
+    const register = async (email, password, isOwner, restaurantID) => {
         try {
+            const body = { email, password, role: isOwner ? 'owner' : 'user' };
+            if (isOwner && restaurantID) {
+                body.restaurantID = restaurantID;
+            }
             const res = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ email, password, role: isOwner ? 'owner' : 'user' })
+                body: JSON.stringify(body)
             });
             const data = await res.json();
 

@@ -1,26 +1,41 @@
 import User from '../models/User.js';
 import { v2 as cloudinary } from 'cloudinary';
+import Restaurant from '../models/Restaurant.js';
+import mongoose from 'mongoose';
 
-// POST register new user
-export const register = async (req, res) => {
+export const register = async (req, res) => { 
     try {
-        const { email, password, role} = req.body;
-
+        const { email, password, role, restaurantID} = req.body;
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ success: false, message: 'User already exists' });
         }
-
-        const user = new User({
+        
+        const userData = {
             email,
             password,
             role
-        });
-
+        };
+        if (role === "owner") {
+            try {
+                const objectId = new mongoose.Types.ObjectId(restaurantID.trim());
+                const findRestaurant = await Restaurant.findById(objectId);
+                if (!findRestaurant) {
+                    return res.status(404).json({
+                        success: false,
+                        message: "Restaurant not found. Please check the ID and try again."
+                    });
+                }
+                userData.restaurantID = objectId;
+            } catch (err) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Restaurant not found. Please check the ID and try again."
+                });
+            }
+        }
+        const user = new User(userData);
         await user.save();
-
-        req.session.userId = user._id;
-
         res.status(201).json({ success: true, user: user.toJSON() });
     } catch (error) {
         console.error('Register error:', error);

@@ -35,6 +35,7 @@ const Navbar = () => {
   const [regPassword, setRegPassword] = useState("");
   const [regConfirm, setRegConfirm] = useState("");
   const [registerAsOwner, setRegisterAsOwner] = useState(false);
+  const [regRestaurantID, setRegRestaurantID] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -56,13 +57,14 @@ const Navbar = () => {
       setError("Passwords do not match.");
       return;
     }
-    const result = await register(regEmail, regPassword, registerAsOwner);
+    const result = await register(regEmail, regPassword, registerAsOwner,regRestaurantID);
     if (result.success) {
       setIsOpen(false);
       setRegEmail("");
       setRegPassword("");
       setRegConfirm("");
       setRegisterAsOwner(false);
+      setRegRestaurantID("");
       setError("");
     } else {
       setError(result.message);
@@ -154,7 +156,7 @@ const Navbar = () => {
                         />
                         <div className="space-y-1 leading-none">
                           <p className="text-sm font-medium leading-none">
-                            Log in as a Restaurant
+                            Log in as Restaurant Owner
                           </p>
                           <p className="text-sm text-gray-500">
                             Access your restaurant dashboard to manage reviews.
@@ -212,6 +214,19 @@ const Navbar = () => {
                           onChange={(e) => setRegConfirm(e.target.value)}
                         />
                       </div>
+                      {registerAsOwner && (
+                        <div className="space-y-2">
+                          <Label htmlFor="restaurant-id">Enter Restaurant ID</Label>
+                          <Input
+                            id="restaurant-id"
+                            placeholder="Enter your restaurant ID"
+                            type="text" 
+                            required
+                            value={regRestaurantID}
+                            onChange={(e) => setRegRestaurantID(e.target.value)}         
+                          />
+                        </div>
+                      )}
                       <label
                         htmlFor="register-restaurant-account"
                         className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm cursor-pointer transition-colors ${registerAsOwner ? 'bg-primary/5 border-primary/50' : 'hover:bg-gray-50'}`}
@@ -247,7 +262,7 @@ const Navbar = () => {
               <Button onClick={logout} variant="outline" className="font-bold border-1 border-black">Log Out</Button>
             </div>
           )}
-          {(user?.role !== 'admin' || user?.role === 'owner') && (
+          {(user?.role !== 'admin') && (
             <Link to="/profile" className="flex-shrink-0">
               <img src={ProfileIcon} width='24px' alt="Profile" />
             </Link>
