@@ -53,7 +53,7 @@ function Home() {
   }, []);
 
   const sortedRestaurants = [...restaurants].sort((a, b) => b.avgRating - a.avgRating);
-  console.log("User data in Home component:", user.restaurantID.name);
+  console.log("User data in Home component:", user?.restaurantID?.name);
   if (user?.role === 'owner') {
     
     const restaurantName = user.restaurantID?.name;

@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
 
             if (data.success) {
                 setUser(data.user);
+                window.location.href = '/';
                 return { success: true };
             } else {
                 return { success: false, message: data.message };
@@ -76,6 +77,7 @@ export const AuthProvider = ({ children }) => {
 
             if (data.success) {
                 setUser(data.user);
+                window.location.href = '/';
                 return { success: true };
             } else {
                 return { success: false, message: data.message };
@@ -92,6 +94,7 @@ export const AuthProvider = ({ children }) => {
                 method: 'POST',
                 credentials: 'include'
             });
+            window.location.href = '/';
         } catch (error) {
             console.error('Logout failed:', error);
         }
