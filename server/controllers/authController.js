@@ -86,12 +86,13 @@ export const checkSession = async (req, res) => {
             return res.json({ user: null });
         }
 
-        const user = await User.findById(req.session.userId);
+       
+        const user = await User.findById(req.session.userId).populate('restaurantID');
         if (!user) {
             return res.json({ user: null });
         }
 
-        res.json({ user: user.toJSON() });
+        res.json({ user }); 
     } catch (error) {
         console.error('Check session error:', error);
         res.status(500).json({ user: null });

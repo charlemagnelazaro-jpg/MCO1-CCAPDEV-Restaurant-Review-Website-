@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema({
     },
     restaurantID:{
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Restaurant',
         required: function isOwner(){
             return this.role === "owner" ? true : false
         }

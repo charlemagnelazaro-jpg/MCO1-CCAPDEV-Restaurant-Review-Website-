@@ -12,6 +12,7 @@ import {
 import HomePic from './assets/home.jpg'
 import { useAuth } from './context/AuthContext'; 
 import { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 function Home() {
   const { user, restaurants, getAllRestaurants } = useAuth();
   const [reviewList, setReviewList] = useState([]);
@@ -52,17 +53,26 @@ function Home() {
   }, []);
 
   const sortedRestaurants = [...restaurants].sort((a, b) => b.avgRating - a.avgRating);
+  console.log("User data in Home component:", user.restaurantID.name);
+  if (user?.role === 'owner') {
+    
+    const restaurantName = user.restaurantID?.name;
+    if (restaurantName) {
+      return <Navigate to={`/review/${encodeURIComponent(restaurantName)}`} />;
+    }
+    else{
+      return <div>Loading your restaurant info..</div>;
+    }
+  }
 
   return (
     <div className='m-10 space-y-10'>
-      
       <section className="relative h-[400px] mx-12 overflow-hidden rounded-xl bg-slate-900 text-white">
         <img 
           src={HomePic}
           alt="Featured" 
           className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
-        
         <div className="relative z-10 flex flex-col items-start justify-center h-full px-8 max-w-2xl space-y-4">
           <h2 className="text-5xl font-extrabold tracking-tight">Brother Bernie's Top Picks</h2>
           <p className="text-lg text-slate-200">
@@ -75,7 +85,6 @@ function Home() {
           </a>
         </div>
       </section>
-
       <section>
         <h1 className="text-2xl font-bold mb-4 px-12">Explore</h1>
         <Carousel className="w-full px-12"> 
@@ -96,7 +105,6 @@ function Home() {
           <CarouselNext className="right-0" />
         </Carousel>
       </section>
-
       <section>
         <h1 className="text-2xl font-bold mb-4 px-12">Recent Reviews</h1>
         <Carousel className="w-full px-12">
@@ -116,7 +124,7 @@ function Home() {
         </Carousel>
       </section>
     </div>
-  )
+  );
 }
 
 export default Home
