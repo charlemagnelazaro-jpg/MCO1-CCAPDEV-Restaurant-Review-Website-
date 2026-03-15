@@ -45,7 +45,7 @@ const AnimatedLoadingSkeleton = ({ reviews = [] }) => {
                             {/* Review Content */}
                             <div className="flex items-center gap-3 mb-3">
                                 <Avatar className="w-8 h-8">
-                                    <AvatarImage src={review.image || "https://github.com/shadcn.png"} />
+                                    <AvatarImage src={review.authorImage || "https://github.com/shadcn.png"} />
                                     <AvatarFallback>U</AvatarFallback>
                                 </Avatar>
                                 <div className="overflow-hidden">
@@ -65,16 +65,16 @@ const AnimatedLoadingSkeleton = ({ reviews = [] }) => {
 
                             {/* Image if available */}
                             {review.image && (
-                                <div className="h-32 w-full rounded-md mb-3 overflow-hidden">
+                                <div className="h-32 w-full rounded-md mb-3 overflow-hidden shrink-0">
                                     <img src={review.image} alt={review.restaurant} className="w-full h-full object-cover" />
                                 </div>
                             )}
 
-                            <p className="text-xs text-muted-foreground line-clamp-3 mb-2 flex-grow">
+                            <p className={`text-xs text-muted-foreground mb-2 flex-grow ${review.image ? 'line-clamp-3' : 'line-clamp-[8]'} whitespace-pre-wrap`}>
                                 {review.text}
                             </p>
 
-                            <div className="text-[10px] text-gray-400 mt-auto">
+                            <div className="text-[10px] text-gray-400 mt-auto pt-2">
                                 {review.time}
                             </div>
                         </motion.div>
