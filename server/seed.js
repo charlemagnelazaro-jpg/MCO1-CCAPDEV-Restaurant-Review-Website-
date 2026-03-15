@@ -77,7 +77,7 @@ const seedRestaurants = [
         backgroundImg: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'
     },
     {
-        name: 'Pericos',
+        name: "Perico's",
         address: "Razon's Building",
         avgRating: 4.8,
         totalReviews: 89,

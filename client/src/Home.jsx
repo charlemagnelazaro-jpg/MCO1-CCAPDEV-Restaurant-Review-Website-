@@ -35,7 +35,8 @@ function Home() {
                       upvotes: item.upvotes || [],
                       downvotes: item.downvotes || [],
                       totalVoteCount: item.totalVoteCount || 0,
-                      reply: item.reply?.text
+                      reply: item.reply?.text,
+                      createdAt: item.createdAt
                   }));
   
                   setReviewList(reviews);

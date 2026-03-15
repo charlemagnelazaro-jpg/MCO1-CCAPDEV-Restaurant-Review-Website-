@@ -32,6 +32,7 @@ const ReviewCard = React.forwardRef(({
   currentUser,
   isSelected,
   onSelect,
+  createdAt,
   inHome = false
 }, ref) => {
 
@@ -143,6 +144,38 @@ const ReviewCard = React.forwardRef(({
         </div>
     }
   }
+
+  const getRecency = (createdAt) => {
+    if (!createdAt) return '';
+    const now = new Date();
+    const postDate = new Date(createdAt);
+    
+    if (isNaN(postDate)) return '';
+    
+    const diffInSeconds = Math.floor((now - postDate) / 1000);
+
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60
+    };
+
+    if (diffInSeconds < 60) {
+      return 'just now';
+    }
+
+    for (const [unit, seconds] of Object.entries(intervals)) {
+      const value = Math.floor(diffInSeconds / seconds);
+      if (value >= 1) {
+        return `${value} ${unit}${value > 1 ? 's' : ''} ago`;
+      }
+    }
+    
+    return '';
+  };
 
   return (
     
@@ -307,7 +340,7 @@ const ReviewCard = React.forwardRef(({
         </div>
 
         <time className="text-[11px] text-muted-foreground uppercase font-medium">
-          2 days ago
+          {getRecency(createdAt)}
         </time>
 
         {isOwner && isSelected && (

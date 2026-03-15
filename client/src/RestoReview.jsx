@@ -49,7 +49,8 @@ const RestoReview = () => {
                     upvotes: item.upvotes || [],
                     downvotes: item.downvotes || [],
                     totalVoteCount: item.totalVoteCount || 0,
-                    reply: item.reply?.text
+                    reply: item.reply?.text,
+                    createdAt: item.createdAt
                 }));
 
                 setReviewList(restaurantReviews);
@@ -229,7 +230,7 @@ const RestoReview = () => {
                     <div className="h-64 w-full overflow-hidden rounded-xl mb-4">
                         <img src={restaurantObj.backgroundImg} className="w-full h-full object-cover" alt={restaurantObj.name} />
                     </div>
-
+                    
                     <div className="flex flex-col gap-2">
                         <h1 className="text-3xl font-bold">{restaurantObj.name}</h1>
                         <div className="flex items-center gap-4 text-sm">
@@ -278,8 +279,8 @@ const RestoReview = () => {
                             </div>
                         </div>
                     </div>
-
-                    <div className="w-full md:w-80">
+                    
+                    {user?.role !== 'admin' ? (<div className="w-full md:w-80">
                         {user?.role === 'owner' ? ( //user is an owner
                             <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
                                 <h2 className="text-lg font-bold mb-4">
@@ -379,7 +380,8 @@ const RestoReview = () => {
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </div>) : (<div></div>)}
+                    
                 </div>
             </div>
         </form>
