@@ -183,15 +183,18 @@ export const AuthProvider = ({ children }) => {
     }
 
     const incrementUserReviewCount = () => {
-        if (user && user.stats) {
-            setUser({
-                ...user,
-                stats: {
-                    ...user.stats,
-                    reviews: user.stats.reviews + 1
-                }
-            });
-        }
+        setUser((prevUser) => {
+            if (prevUser && prevUser.stats) {
+                return {
+                    ...prevUser,
+                    stats: {
+                        ...prevUser.stats,
+                        reviews: prevUser.stats.reviews + 1
+                    }
+                };
+            }
+            return prevUser;
+        });
     };
 
     const updateUserHelpfulVotes = async () => {

@@ -97,6 +97,18 @@ export const getReviewsByRestaurant = async (req, res) => {
     }
 }
 
+export const getReviewsByUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        const reviews = await Review.find({ user: user._id }).populate('restaurant', 'name backgroundImg').sort({ createdAt: -1 });
+        res.status(200).json(reviews);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 export const updateVotes = async (req, res) => {
     try {
         const review = await Review.findById(req.params.id);

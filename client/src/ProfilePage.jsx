@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { EditProfile } from '@/components/ui/edit-profile'
 import { Card, CardContent, CardHeader, CardTitle } from './components/card'
 import { Avatar, AvatarImage, AvatarFallback } from './components/avatar'
@@ -13,6 +13,35 @@ import { Link } from 'react-router-dom'
 const ProfilePage = () => {
   const containerRef = useRef(null)
   const { user, updateProfile } = useAuth();
+  const [recentReviews, setRecentReviews] = useState([]);
+
+  useEffect(() => {
+    const fetchUserReviews = async () => {
+      if (!user) return;
+      try {
+        const userId = user._id || user.id;
+        if (!userId) return;
+        
+        const response = await fetch(`http://localhost:3000/api/review/user/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          const mappedReviews = data.map(item => ({
+            id: item._id,
+            restaurant: item.restaurant?.name || "Unknown Restaurant",
+            rating: item.rating,
+            image: (item.images && item.images.length > 0) ? item.images[0] : (item.restaurant?.backgroundImg || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4"),
+            text: item.comment,
+            time: new Date(item.createdAt).toLocaleDateString()
+          }));
+          setRecentReviews(mappedReviews);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user reviews:", error);
+      }
+    };
+
+    fetchUserReviews();
+  }, [user]);
 
   useEffect(() => {
     // Only run animation if user exists
@@ -150,7 +179,7 @@ const ProfilePage = () => {
                 <div className="mt-6 space-y-2">
                   <div className="flex justify-between items-center py-2 border-b">
                     <span className="font-semibold">Reviews:</span>
-                    <span>{user.stats.reviews}</span>
+                    <span>{recentReviews.length > 0 ? recentReviews.length : user.stats.reviews}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b">
                     <span className="font-semibold">Upvotes:</span>
@@ -166,7 +195,7 @@ const ProfilePage = () => {
             <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
 
             <div className="w-full">
-              <AnimatedLoadingSkeleton reviews={user.reviews} />
+              <AnimatedLoadingSkeleton reviews={recentReviews} />
             </div>
           </div>
         </div>
