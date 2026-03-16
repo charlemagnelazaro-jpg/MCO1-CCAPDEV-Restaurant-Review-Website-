@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Edit, Camera } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 export function EditProfile({ profile, setProfile, trigger }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,8 +35,13 @@ export function EditProfile({ profile, setProfile, trigger }) {
   };
 
   const handleSave = async () => {
-    await setProfile(formData, avatarFile);
-    setIsOpen(false);
+    try {
+      await setProfile(formData, avatarFile);
+      setIsOpen(false);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update profile.");
+    }
   };
 
   const handleOpenChange = (open) => {
