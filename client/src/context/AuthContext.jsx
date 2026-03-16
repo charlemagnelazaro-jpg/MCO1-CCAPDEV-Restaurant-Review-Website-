@@ -34,12 +34,9 @@ export const AuthProvider = ({ children }) => {
 
     // fetch(api/test) - get
 
-    const login = async (email, password, isRestaurant = false) => {
+    const login = async (email, password) => {
         try {
-
-            // WILL CHECK WHETHER THE USER IS LOGGING IN AS A RESTAURANT OR NOT
-            // HAYDEN MAKE ROUTES LIKES THIS
-            const endpoint = isRestaurant ? '/api/restaurant/login' : '/api/login';
+            const endpoint = '/api/login';
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

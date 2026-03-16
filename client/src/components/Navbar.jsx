@@ -27,7 +27,6 @@ const Navbar = () => {
   // Login State
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-  const [loginAsRestaurant, setLoginAsRestaurant] = useState(false);
   const [error, setError] = useState("");
 
   // Register State
@@ -39,12 +38,11 @@ const Navbar = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const result = await login(loginEmail, loginPassword, loginAsRestaurant);
+    const result = await login(loginEmail, loginPassword);
     if (result.success) {
       setIsOpen(false);
       setLoginEmail("");
       setLoginPassword("");
-      setLoginAsRestaurant(false);
       setError("");
     } else {
       setError(result.message);
@@ -144,25 +142,7 @@ const Navbar = () => {
                           onChange={(e) => setLoginPassword(e.target.value)}
                         />
                       </div>
-                      <label
-                        htmlFor="login-restaurant-account"
-                        className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3 shadow-sm cursor-pointer transition-colors ${loginAsRestaurant ? 'bg-primary/5 border-primary/50' : 'hover:bg-gray-50'}`}
-                      >
-                        <Checkbox
-                          id="login-restaurant-account"
-                          checked={loginAsRestaurant}
-                          onCheckedChange={(checked) => setLoginAsRestaurant(checked === true)}
-                          className="mt-1"
-                        />
-                        <div className="space-y-1 leading-none">
-                          <p className="text-sm font-medium leading-none">
-                            Log in as Restaurant Owner
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Access your restaurant dashboard to manage reviews.
-                          </p>
-                        </div>
-                      </label>
+
                       <div className="flex justify-end">
                         <a className="text-sm underline hover:no-underline" href="#">
                           Forgot password?
