@@ -35,6 +35,7 @@ const Navbar = () => {
   const [regConfirm, setRegConfirm] = useState("");
   const [registerAsOwner, setRegisterAsOwner] = useState(false);
   const [regRestaurantID, setRegRestaurantID] = useState("");
+  const [regName, setRegName] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -55,7 +56,7 @@ const Navbar = () => {
       setError("Passwords do not match.");
       return;
     }
-    const result = await register(regEmail, regPassword, registerAsOwner,regRestaurantID);
+    const result = await register(regEmail, regPassword, registerAsOwner,regRestaurantID, regName);
     if (result.success) {
       setIsOpen(false);
       setRegEmail("");
@@ -63,6 +64,7 @@ const Navbar = () => {
       setRegConfirm("");
       setRegisterAsOwner(false);
       setRegRestaurantID("");
+      setRegName("");
       setError("");
     } else {
       setError(result.message);
@@ -195,16 +197,29 @@ const Navbar = () => {
                         />
                       </div>
                       {registerAsOwner && (
-                        <div className="space-y-2">
-                          <Label htmlFor="restaurant-id">Enter Restaurant ID</Label>
-                          <Input
-                            id="restaurant-id"
-                            placeholder="Enter your restaurant ID"
-                            type="text" 
-                            required
-                            value={regRestaurantID}
-                            onChange={(e) => setRegRestaurantID(e.target.value)}         
-                          />
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="owner-name">Name</Label>
+                            <Input
+                              id="owner-name"
+                              placeholder="Enter your name"
+                              type="text" 
+                              required
+                              value={regName}
+                              onChange={(e) => setRegName(e.target.value)}         
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="restaurant-id">Enter Restaurant ID</Label>
+                            <Input
+                              id="restaurant-id"
+                              placeholder="Enter your restaurant ID"
+                              type="text" 
+                              required
+                              value={regRestaurantID}
+                              onChange={(e) => setRegRestaurantID(e.target.value)}         
+                            />
+                          </div>
                         </div>
                       )}
                       <label

@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 
 export const register = async (req, res) => { 
     try {
-        const { email, password, role, restaurantID} = req.body;
+        const { email, password, role, restaurantID, name} = req.body;
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ success: false, message: 'User already exists' });
@@ -16,6 +16,10 @@ export const register = async (req, res) => {
             password,
             role
         };
+        
+        if (name) {
+            userData.name = name;
+        }
         if (role === "owner") {
             try {
                 const objectId = new mongoose.Types.ObjectId(restaurantID.trim());

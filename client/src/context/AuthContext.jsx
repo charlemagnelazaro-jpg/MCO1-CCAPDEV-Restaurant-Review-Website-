@@ -58,11 +58,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (email, password, isOwner, restaurantID) => {
+    const register = async (email, password, isOwner, restaurantID, name) => {
         try {
             const body = { email, password, role: isOwner ? 'owner' : 'user' };
             if (isOwner && restaurantID) {
                 body.restaurantID = restaurantID;
+            }
+            if (isOwner && name) {
+                body.name = name;
             }
             const res = await fetch('/api/register', {
                 method: 'POST',
