@@ -146,12 +146,8 @@ const ReviewCard = React.forwardRef(({
   }
 
   const getRecency = (createdAt) => {
-    if (!createdAt) return '';
     const now = new Date();
     const postDate = new Date(createdAt);
-    
-    if (isNaN(postDate)) return '';
-    
     const diffInSeconds = Math.floor((now - postDate) / 1000);
 
     const intervals = {
@@ -173,8 +169,6 @@ const ReviewCard = React.forwardRef(({
         return `${value} ${unit}${value > 1 ? 's' : ''} ago`;
       }
     }
-    
-    return '';
   };
 
   return (

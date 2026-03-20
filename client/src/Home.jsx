@@ -10,7 +10,7 @@ import {
   CarouselPrevious,
 } from "./components/ui/carousel"
 import HomePic from './assets/home.jpg'
-import { useAuth } from './context/AuthContext'; 
+import { useAuth } from './context/AuthContext';
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 function Home() {
@@ -18,35 +18,35 @@ function Home() {
   const [reviewList, setReviewList] = useState([]);
 
   const fetchReviews = async () => {
-          try {
-              const response = await fetch(`http://localhost:3000/api/review/`);
-              if (response.ok) {
-                  const data = await response.json();
-  
-                  const reviews = data.map(item => ({
-                      id: item._id,
-                      authorId: item.user?._id || item.user?.id || item.user,
-                      restaurant: item.restaurant?.name,
-                      name: item.user?.name,
-                      review: item.comment,
-                      rating: item.rating,
-                      imageUrl: item.user?.img || "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg",
-                      handle: item.title || restaurant,
-                      images: item.images,
-                      upvotes: item.upvotes || [],
-                      downvotes: item.downvotes || [],
-                      totalVoteCount: item.totalVoteCount || 0,
-                      reply: item.reply?.text,
-                      createdAt: item.createdAt
-                  }));
-  
-                  setReviewList(reviews);
-              }
-          } catch (error) {
-              console.error("Failed to load reviews:", error);
-          }
-      };
-  
+    try {
+      const response = await fetch(`http://localhost:3000/api/review/`);
+      if (response.ok) {
+        const data = await response.json();
+
+        const reviews = data.map(item => ({
+          id: item._id,
+          authorId: item.user?._id || item.user?.id || item.user,
+          restaurant: item.restaurant?.name,
+          name: item.user?.name,
+          review: item.comment,
+          rating: item.rating,
+          imageUrl: item.user?.img || "https://i.pinimg.com/474x/0e/53/97/0e53973045af09690a585416fba9394c.jpg",
+          handle: item.title || restaurant,
+          images: item.images,
+          upvotes: item.upvotes || [],
+          downvotes: item.downvotes || [],
+          totalVoteCount: item.totalVoteCount || 0,
+          reply: item.reply?.text,
+          createdAt: item.createdAt
+        }));
+
+        setReviewList(reviews);
+      }
+    } catch (error) {
+      console.error("Failed to load reviews:", error);
+    }
+  };
+
   useEffect(() => {
     getAllRestaurants();
     fetchReviews();
@@ -55,12 +55,12 @@ function Home() {
   const sortedRestaurants = [...restaurants].sort((a, b) => b.avgRating - a.avgRating);
   console.log("User data in Home component:", user?.restaurantID?.name);
   if (user?.role === 'owner') {
-    
+
     const restaurantName = user.restaurantID?.name;
     if (restaurantName) {
       return <Navigate to={`/review/${encodeURIComponent(restaurantName)}`} />;
     }
-    else{
+    else {
       return <div>Loading your restaurant info..</div>;
     }
   }
@@ -68,26 +68,21 @@ function Home() {
   return (
     <div className='m-10 space-y-10'>
       <section className="relative h-[400px] mx-12 overflow-hidden rounded-xl bg-slate-900 text-white">
-        <img 
+        <img
           src={HomePic}
-          alt="Featured" 
+          alt="Featured"
           className="absolute inset-0 w-full h-full object-cover opacity-60"
         />
         <div className="relative z-10 flex flex-col items-start justify-center h-full px-8 max-w-2xl space-y-4">
-          <h2 className="text-5xl font-extrabold tracking-tight">Brother Bernie's Top Picks</h2>
+          <h2 className="text-5xl font-extrabold tracking-tight">Welcome to ArcherEats</h2>
           <p className="text-lg text-slate-200">
-            Discover food spots around the campus, hand-picked by the university president himself.
+            Discover food spots around the campus for your next food trip!
           </p>
-          <a href="https://www.youtube.com/watch?v=1Ir4BefHU4o" target="_blank" rel="noopener noreferrer">
-            <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-bold transition-all">
-              Read More
-            </button>
-          </a>
         </div>
       </section>
       <section>
         <h1 className="text-2xl font-bold mb-4 px-12">Explore</h1>
-        <Carousel className="w-full px-12"> 
+        <Carousel className="w-full px-12">
           <CarouselContent className="-ml-2">
             {sortedRestaurants.length > 0 ? (
               sortedRestaurants.map((restaurant, index) => (
