@@ -51,6 +51,10 @@ const reviewSchema = new mongoose.Schema({
     totalVoteCount: {
         type: Number,
         default: 0
+    },
+    isEdited: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

@@ -87,7 +87,7 @@ function Home() {
             {sortedRestaurants.length > 0 ? (
               sortedRestaurants.map((restaurant, index) => (
                 <CarouselItem key={restaurant._id || index} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4">
-                  <Link to={`/review/${encodeURIComponent(restaurant.name)}`}>
+                  <Link to={`/review/${encodeURIComponent(restaurant.name)}`} className="block w-full h-full">
                     <RestaurantCard restaurant={restaurant} />
                   </Link>
                 </CarouselItem>

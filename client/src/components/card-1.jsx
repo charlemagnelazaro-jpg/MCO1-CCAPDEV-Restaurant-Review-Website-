@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, ChevronUp, Star, Reply } from "lucide-react";
+import { ChevronDown, ChevronUp, Star, Reply, MoreVertical, Edit, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -33,12 +33,17 @@ const ReviewCard = React.forwardRef(({
   isSelected,
   onSelect,
   createdAt,
-  inHome = false
+  inHome = false,
+  onEdit,
+  onDelete,
+  isEdited
 }, ref) => {
 
-  
+
 
   const [expandedImage, setExpandedImage] = React.useState(null);
+  const [isReviewExpanded, setIsReviewExpanded] = React.useState(false);
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   const initialUserVote = React.useMemo(() => {
     if (!currentUser) return null;
@@ -137,11 +142,11 @@ const ReviewCard = React.forwardRef(({
 
   const isOwner = currentUser?.role === 'owner';
 
-  const displayRestaurant = () =>{
-    if (inHome){
+  const displayRestaurant = () => {
+    if (inHome) {
       return <div className="text-lg text-muted-foreground uppercase font-medium mb-2">
-          {restaurant}
-        </div>
+        {restaurant}
+      </div>
     }
   }
 
@@ -172,7 +177,7 @@ const ReviewCard = React.forwardRef(({
   };
 
   return (
-    
+
     <motion.div
       ref={ref}
       className={cn(
@@ -204,9 +209,45 @@ const ReviewCard = React.forwardRef(({
           </div>
         </div>
 
-        <div className="flex items-center gap-1 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-md text-sm font-bold border border-yellow-200/50">
-          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-          <span className="text-yellow-700 dark:text-yellow-500">{rating.toFixed(1)}</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-md text-sm font-bold border border-yellow-200/50">
+            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+            <span className="text-yellow-700 dark:text-yellow-500">{rating.toFixed(1)}</span>
+          </div>
+          {isOwnReview && (
+            <div className="relative">
+              <Button 
+                type="button"
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 text-slate-500" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(!menuOpen);
+                }}
+              >
+                <MoreVertical className="h-5 w-5" />
+              </Button>
+              <AnimatePresence>
+              {menuOpen && (
+                <>
+                <div className="fixed inset-0 z-40" onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(false);
+                }}></div>
+                <motion.div initial={{opacity: 0, y: -10}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: -10}} className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-slate-200 z-50 overflow-hidden">
+                  <button type="button" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onEdit?.(); }} className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2 text-slate-700">
+                    <Edit className="h-4 w-4" /> Edit
+                  </button>
+                  <button type="button" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onDelete?.(); }} className="w-full text-left px-4 py-2 text-sm hover:bg-red-50 flex items-center gap-2 text-red-600">
+                    <Trash2 className="h-4 w-4" /> Delete
+                  </button>
+                </motion.div>
+                </>
+              )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
 
@@ -215,8 +256,24 @@ const ReviewCard = React.forwardRef(({
           <div className="absolute left-6 top-4 bottom-0 w-0.5 bg-muted -ml-[25px] z-0" />
         )}
 
-        <p id="review-content" className="mt-4 text-sm leading-relaxed text-foreground/90 relative z-10">
-          {review}
+        <p id="review-content" className="mt-4 text-sm leading-relaxed text-foreground/90 relative z-10 whitespace-pre-wrap">
+          {isReviewExpanded ? review : (review?.length > 150 ? review.slice(0, 150) : review)}
+          {!isReviewExpanded && review?.length > 150 && (
+            <span
+              onClick={(e) => { e.stopPropagation(); setIsReviewExpanded(true); }}
+              className="text-primary cursor-pointer font-semibold ml-1 hover:underline"
+            >
+              ...See More
+            </span>
+          )}
+          {isReviewExpanded && review?.length > 150 && (
+            <span
+              onClick={(e) => { e.stopPropagation(); setIsReviewExpanded(false); }}
+              className="text-primary cursor-pointer font-semibold ml-1 hover:underline"
+            >
+              See Less
+            </span>
+          )}
         </p>
 
         {images && images.length > 0 && (
@@ -270,6 +327,7 @@ const ReviewCard = React.forwardRef(({
                   className="w-full h-full object-contain rounded-lg"
                 />
                 <button
+                  type="button"
                   className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -334,7 +392,7 @@ const ReviewCard = React.forwardRef(({
         </div>
 
         <time className="text-[11px] text-muted-foreground uppercase font-medium">
-          {getRecency(createdAt)}
+          {getRecency(createdAt)}{isEdited ? ' (Edited)' : ''}
         </time>
 
         {isOwner && isSelected && (

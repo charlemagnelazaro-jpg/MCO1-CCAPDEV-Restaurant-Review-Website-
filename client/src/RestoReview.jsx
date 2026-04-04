@@ -29,6 +29,8 @@ const RestoReview = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedReview, setSelectedReview] = useState(null);
     const [replyText, setReplyText] = useState("");
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingReviewId, setEditingReviewId] = useState(null);
 
     const fetchReviews = async () => {
         if (!restaurant) return;
@@ -50,7 +52,8 @@ const RestoReview = () => {
                     downvotes: item.downvotes || [],
                     totalVoteCount: item.totalVoteCount || 0,
                     reply: item.reply?.text,
-                    createdAt: item.createdAt
+                    createdAt: item.createdAt,
+                    isEdited: item.isEdited
                 }));
 
                 setReviewList(restaurantReviews);
@@ -73,6 +76,49 @@ const RestoReview = () => {
 
     //handle missing restaurant
     if (!restaurant) return <div>Restaurant not found.</div>;
+
+    const handleEditReviewClick = (reviewItem) => {
+        setIsEditing(true);
+        setEditingReviewId(reviewItem.id);
+        setRating(reviewItem.rating);
+        setTitle(reviewItem.handle === restaurant ? "" : reviewItem.handle);
+        setComment(reviewItem.review);
+        setFiles([]);
+    };
+
+    const handleDeleteReviewClick = async (reviewId) => {
+        if (!window.confirm("Are you sure you want to delete this review?")) return;
+        const toastId = toast.loading("Deleting review...");
+        try {
+            const response = await fetch(`http://localhost:3000/api/review/${reviewId}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                toast.success("Review deleted successfully", { id: toastId });
+                fetchReviews();
+                if (editingReviewId === reviewId) {
+                    cancelEdit();
+                }
+                await fetch(`http://localhost:3000/api/review/updateAvgRating/${restaurant}`, {
+                    method: 'PATCH',
+                });
+            } else {
+                const err = await response.json();
+                toast.error(err.error || "Failed to delete", { id: toastId });
+            }
+        } catch (err) {
+            toast.error("Error deleting review", { id: toastId });
+        }
+    };
+
+    const cancelEdit = () => {
+        setIsEditing(false);
+        setEditingReviewId(null);
+        setRating(0);
+        setTitle("");
+        setComment("");
+        setFiles([]);
+    };
 
     //function for drag and drop files
     const handleDrop = async (acceptedFiles) => {
@@ -120,10 +166,15 @@ const RestoReview = () => {
         }
 
 
+        const toastId = toast.loading(isEditing ? "Updating review..." : "Uploading review...");
+
         try {
+            const endpoint = isEditing ? `http://localhost:3000/api/review/${editingReviewId}` : 'http://localhost:3000/api/review';
+            const method = isEditing ? 'PUT' : 'POST';
+
             // post review to backend
-            const response = await fetch('/api/review', {
-                method: 'POST',
+            const response = await fetch(endpoint, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -133,21 +184,21 @@ const RestoReview = () => {
                     restaurant: restaurant,
                     rating: rating,
                     comment: comment.trim(),
-                    images: files ? files.map(f => f.base64) : [] // base64 strings
+                    images: isEditing ? undefined : (files ? files.map(f => f.base64) : []) // base64 strings
                 }),
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 console.error("Backend error:", errorData);
-                toast.error("Failed to post review: " + (errorData.error || 'Unknown error'));
+                toast.error("Failed to post review: " + (errorData.error || 'Unknown error'), { id: toastId });
             } else {
                 const savedReview = await response.json();
-                toast.success("Review posted successfully!");
+                toast.success(isEditing ? "Review updated successfully!" : "Review posted successfully!", { id: toastId });
                 // trigger refetch from backend instead of local append to guarantee DB state
                 fetchReviews();
                 // update the review count without having to refresh
-                incrementUserReviewCount();
+                if (!isEditing) incrementUserReviewCount();
                 //update average rating
                 const updateAvgRatingResponse = await fetch(`/api/review/updateAvgRating/${restaurant}`, {
                     method: 'PATCH',
@@ -158,10 +209,7 @@ const RestoReview = () => {
                     toast.error("Failed to update average rating: " + (errorData.error || 'Unknown error'));
                 }
                 //Revert to default
-                setRating(0);
-                setTitle("");
-                setComment("");
-                setFiles([]);
+                cancelEdit();
             }
 
 
@@ -230,7 +278,7 @@ const RestoReview = () => {
                     <div className="h-64 w-full overflow-hidden rounded-xl mb-4">
                         <img src={restaurantObj.backgroundImg} className="w-full h-full object-cover" alt={restaurantObj.name} />
                     </div>
-                    
+
                     <div className="flex flex-col gap-2">
                         <h1 className="text-3xl font-bold">{restaurantObj.name}</h1>
                         <div className="flex items-center gap-4 text-sm">
@@ -273,13 +321,15 @@ const RestoReview = () => {
                                         currentUser={user}
                                         isSelected={selectedReview === item.id}
                                         onSelect={setSelectedReview}
+                                        onEdit={() => handleEditReviewClick(item)}
+                                        onDelete={() => handleDeleteReviewClick(item.id)}
                                         {...item}
                                     />
                                 ))}
                             </div>
                         </div>
                     </div>
-                    
+
                     {user?.role !== 'admin' ? (<div className="w-full md:w-80">
                         {user?.role === 'owner' ? ( //user is an owner
                             <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
@@ -322,7 +372,12 @@ const RestoReview = () => {
                             </div>
                         ) : (//user is not an owner
                             <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-sm sticky top-4">
-                                <h2 className="text-lg font-bold mb-4">Write a Review</h2>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-lg font-bold">{isEditing ? "Edit Review" : "Write a Review"}</h2>
+                                    {isEditing && (
+                                        <Button variant="ghost" size="sm" type="button" onClick={cancelEdit} className="text-slate-500 hover:text-slate-700 h-8 px-2 z-[60]">Cancel</Button>
+                                    )}
+                                </div>
 
                                 <div className="space-y-4">
                                     <div>
@@ -355,33 +410,35 @@ const RestoReview = () => {
                                         />
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium mb-1.5">Add Photos</label>
-                                        <Dropzone
-                                            maxSize={1024 * 1024 * 10}
-                                            minSize={1024}
-                                            maxFiles={5}
-                                            accept={{ 'image/*': [] }}
-                                            onDrop={handleDrop}
-                                            src={files}
-                                            onError={console.error}
-                                        >
-                                            <DropzoneEmptyState />
-                                            <DropzoneContent />
-                                        </Dropzone>
-                                    </div>
+                                    {!isEditing && (
+                                        <div>
+                                            <label className="block text-sm font-medium mb-1.5">Add Photos</label>
+                                            <Dropzone
+                                                maxSize={1024 * 1024 * 10}
+                                                minSize={1024}
+                                                maxFiles={5}
+                                                accept={{ 'image/*': [] }}
+                                                onDrop={handleDrop}
+                                                src={files}
+                                                onError={console.error}
+                                            >
+                                                <DropzoneEmptyState />
+                                                <DropzoneContent />
+                                            </Dropzone>
+                                        </div>
+                                    )}
 
                                     <Button
                                         className='w-full bg-green-600 hover:bg-green-700 text-white'
                                         type="submit"
                                     >
-                                        Post Review
+                                        {isEditing ? "Update Review" : "Post Review"}
                                     </Button>
                                 </div>
                             </div>
                         )}
                     </div>) : (<div></div>)}
-                    
+
                 </div>
             </div>
         </form>

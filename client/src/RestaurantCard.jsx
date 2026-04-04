@@ -8,7 +8,7 @@ const RestaurantCard = ({ restaurant }) => {
 
     
   return (
-    <div className="bg-card border rounded-2xl shadow-md overflow-hidden w-80">
+    <div className="bg-card border rounded-2xl shadow-md overflow-hidden w-full h-full">
         <img src={restaurant.backgroundImg} alt="restaurant" className="w-full h-48 object-cover rounded-t-2xl" />
         <div className="p-4">
         <p className="text-lg font-bold leading-tight mb-1 text-xl">{restaurant.name}</p>

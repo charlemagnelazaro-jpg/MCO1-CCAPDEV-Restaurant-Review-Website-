@@ -170,6 +170,38 @@ export const addReplyToReview = async (req, res) => {
     }
 }
 
+export const editReview = async (req, res) => {
+    try {
+        const { title, rating, comment } = req.body;
+        const review = await Review.findById(req.params.id);
+        if (!review) return res.status(404).json({ error: "Review not found" });
+        
+        review.title = title;
+        review.rating = rating;
+        review.comment = comment;
+        review.isEdited = true;
+        
+        await review.save();
+        res.status(200).json(review);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+export const deleteReview = async (req, res) => {
+    try {
+        const review = await Review.findById(req.params.id);
+        if (!review) return res.status(404).json({ error: "Review not found" });
+
+        await User.findByIdAndUpdate(review.user, { $inc: { 'stats.reviews': -1 } });
+        await Review.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({ message: "Review deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 /*Notes
     recompute the restaurant's avgRating after every change to a review
 

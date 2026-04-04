@@ -366,15 +366,6 @@ const seedReviews = [
     },
     {
         restaurantName: 'Potato Corner',
-        userEmail: 'carti@example.com',
-        title: 'Best fries',
-        comment: 'No other fries can compare to this.',
-        rating: 5,
-        timeOffset: 1000 * 60 * 60 * 5,
-        replyText: 'We think so too! Glad you enjoyed them.'
-    },
-    {
-        restaurantName: 'Potato Corner',
         userEmail: 'miko@example.com',
         title: 'Flavorful',
         comment: 'They never skimp on the powder, which is great.',
