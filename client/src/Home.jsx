@@ -19,7 +19,7 @@ function Home() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/review/`);
+      const response = await fetch(`/api/review/`);
       if (response.ok) {
         const data = await response.json();
 

@@ -29,7 +29,7 @@ app.use(fileUpload({
     abortOnLimit: true,
 }));
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     credentials: true
 }));
 
@@ -43,7 +43,7 @@ app.use(session({
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax'
     }
 }));
@@ -52,9 +52,16 @@ app.use('/api/review', reviewRoutes);
 app.use('/api/restaurant', restaurantRoutes);
 app.use('/api', authRoutes);
 
-app.get('/', (req, res) => {
-    res.json({ message: 'ArcherEats API is running' });
-});
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(join(__dirname, '../client/dist')));
+    app.get('*', (req, res) => {
+        res.sendFile(join(__dirname, '../client/dist', 'index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.json({ message: 'ArcherEats API is running' });
+    });
+}
 
 // Global error handler
 app.use((err, req, res, next) => {

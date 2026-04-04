@@ -21,8 +21,8 @@ const ProfilePage = () => {
       try {
         const userId = user._id || user.id;
         if (!userId) return;
-        
-        const response = await fetch(`http://localhost:3000/api/review/user/${userId}`);
+
+        const response = await fetch(`/api/review/user/${userId}`);
         if (response.ok) {
           const data = await response.json();
           const mappedReviews = data.map(item => ({

@@ -33,7 +33,7 @@ const RestoReview = () => {
     const fetchReviews = async () => {
         if (!restaurant) return;
         try {
-            const response = await fetch(`http://localhost:3000/api/review/restaurant/${restaurant}`);
+            const response = await fetch(`/api/review/restaurant/${restaurant}`);
             if (response.ok) {
                 const data = await response.json();
 
@@ -122,7 +122,7 @@ const RestoReview = () => {
 
         try {
             // post review to backend
-            const response = await fetch('http://localhost:3000/api/review', {
+            const response = await fetch('/api/review', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -149,7 +149,7 @@ const RestoReview = () => {
                 // update the review count without having to refresh
                 incrementUserReviewCount();
                 //update average rating
-                const updateAvgRatingResponse = await fetch(`http://localhost:3000/api/review/updateAvgRating/${restaurant}`, {
+                const updateAvgRatingResponse = await fetch(`/api/review/updateAvgRating/${restaurant}`, {
                     method: 'PATCH',
                 });
                 if (!updateAvgRatingResponse.ok) {
@@ -184,7 +184,7 @@ const RestoReview = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/review/reply/${selectedReview}`, {
+            const response = await fetch(`/api/review/reply/${selectedReview}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

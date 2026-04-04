@@ -63,7 +63,7 @@ const ReviewCard = React.forwardRef(({
     if (!currentUser) return;
     const userId = currentUser._id || currentUser.id;
     try {
-      await fetch(`http://localhost:3000/api/review/vote/${id}`, {
+      await fetch(`/api/review/vote/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user: userId, voteType: newVoteType })
