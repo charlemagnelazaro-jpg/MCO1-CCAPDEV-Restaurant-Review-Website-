@@ -30,3 +30,14 @@ export const isNotAdmin = async (req, res, next) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+
+export const isAdmin = async (req, res, next) => {
+    try {
+        if (req.user.role === 'admin') {
+            return next();
+        }
+        return res.status(403).json({ success: false, message: 'Admins only' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};

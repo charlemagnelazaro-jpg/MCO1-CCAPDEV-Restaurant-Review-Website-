@@ -57,6 +57,25 @@ const ReviewCard = React.forwardRef(({
   const [userVote, setUserVote] = React.useState(initialUserVote);
   const { updateUserHelpfulVotes } = useAuth();
 
+  const isAdmin = currentUser?.role === 'admin';
+  const handleAdminDelete = async (e) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this review?')) return;
+    try {
+      const res = await fetch(`/api/review/admin/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (res.ok) {
+        onDelete?.();
+      } else {
+        alert('Failed to delete review.');
+      }
+    } catch (err) {
+      alert('Error deleting review.');
+    }
+  };
+
   //check if the current user is the maker of the review they are voting on
   const isOwnReview = React.useMemo(() => {
     if (!currentUser || !authorId) return false;
@@ -214,6 +233,18 @@ const ReviewCard = React.forwardRef(({
             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
             <span className="text-yellow-700 dark:text-yellow-500">{rating.toFixed(1)}</span>
           </div>
+          {isAdmin && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-red-500 hover:bg-red-100"
+            aria-label="Delete review as admin"
+            onClick={handleAdminDelete}
+          >
+            <span className="text-xl font-bold">×</span>
+          </Button>
+        )}
           {isOwnReview && (
             <div className="relative">
               <Button 
