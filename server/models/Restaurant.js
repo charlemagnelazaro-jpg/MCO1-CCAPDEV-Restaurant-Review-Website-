@@ -21,6 +21,10 @@ const restaurantSchema = new mongoose.Schema({
     totalReviews: {
         type: Number,
         default: 0
+    },
+    aiSummary: {
+        text: String,
+        lastUpdated: Date
     }
 }, {
     timestamps: true

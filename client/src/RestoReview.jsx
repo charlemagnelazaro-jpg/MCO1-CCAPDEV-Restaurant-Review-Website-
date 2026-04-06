@@ -31,6 +31,8 @@ const RestoReview = () => {
     const [replyText, setReplyText] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [editingReviewId, setEditingReviewId] = useState(null);
+    const [aiSummary, setAiSummary] = useState(null);
+    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
 
     const fetchReviews = async () => {
         if (!restaurant) return;
@@ -63,9 +65,28 @@ const RestoReview = () => {
         }
     };
 
+    const fetchAiSummary = async () => {
+        if (!restaurant) return;
+        setIsSummaryLoading(true);
+        try {
+            const response = await fetch(`/api/restaurant/summary/${restaurant}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    setAiSummary(data.summary);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to load AI summary:", error);
+        } finally {
+            setIsSummaryLoading(false);
+        }
+    };
+
     //fetch reviews from the backend on load
     React.useEffect(() => {
         fetchReviews();
+        fetchAiSummary();
     }, [restaurant]);
 
 
@@ -314,6 +335,29 @@ const RestoReview = () => {
                         </div>
 
                         <div className="flex flex-col gap-4">
+                            {/* AI summary */}
+                            {aiSummary && (
+                                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-5 mb-2 shadow-sm relative overflow-hidden">
+                                    <div className="absolute top-[-20px] right-[-20px] p-4 opacity-[0.03] pointer-events-none">
+                                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><path d="M12 3v18" /><path d="m3 12 18 0" /><path d="m18 18-12-12" /><path d="m6 18 12-12" /></svg>
+                                    </div>
+                                    <div className="flex items-center gap-2 mb-3 text-green-800 font-bold relative z-10">
+                                        <h3 className="text-lg tracking-tight">AI Review Summary</h3>
+                                        <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full border border-green-200 ml-2 uppercase tracking-wide">Daily Analysis</span>
+                                    </div>
+                                    <p className="text-green-900/85 leading-relaxed text-sm z-10 relative font-medium">
+                                        {aiSummary}
+                                    </p>
+                                </div>
+                            )}
+                            {isSummaryLoading && (
+                                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-2 shadow-sm animate-pulse">
+                                    <div className="h-6 bg-slate-200 rounded w-1/4 mb-4"></div>
+                                    <div className="h-4 bg-slate-200 rounded w-full mb-2"></div>
+                                    <div className="h-4 bg-slate-200 rounded w-5/6 mb-2"></div>
+                                </div>
+                            )}
+
                             <div className="flex flex-col gap-4">
                                 {filteredReviews.map((item) => (
                                     <ReviewCard
