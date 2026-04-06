@@ -90,7 +90,7 @@ const RestoReview = () => {
         if (!window.confirm("Are you sure you want to delete this review?")) return;
         const toastId = toast.loading("Deleting review...");
         try {
-            const response = await fetch(`http://localhost:3000/api/review/${reviewId}`, {
+            const response = await fetch(`/api/review/${reviewId}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
@@ -99,7 +99,7 @@ const RestoReview = () => {
                 if (editingReviewId === reviewId) {
                     cancelEdit();
                 }
-                await fetch(`http://localhost:3000/api/review/updateAvgRating/${restaurant}`, {
+                await fetch(`/api/review/updateAvgRating/${restaurant}`, {
                     method: 'PATCH',
                 });
             } else {
@@ -169,7 +169,7 @@ const RestoReview = () => {
         const toastId = toast.loading(isEditing ? "Updating review..." : "Uploading review...");
 
         try {
-            const endpoint = isEditing ? `http://localhost:3000/api/review/${editingReviewId}` : 'http://localhost:3000/api/review';
+            const endpoint = isEditing ? `/api/review/${editingReviewId}` : '/api/review';
             const method = isEditing ? 'PUT' : 'POST';
 
             // post review to backend
