@@ -36,7 +36,7 @@ app.use(cors({
 app.set('trust proxy', 1);
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "ArchersSecretKey"
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
