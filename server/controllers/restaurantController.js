@@ -30,7 +30,28 @@ export const getAllRestaurants = async (req, res) => {
             restaurants: restaurants 
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
+export const updateGoogleMapsURL = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { googleMapsUrl } = req.body;
+        if (!googleMapsUrl) {
+            return res.status(400).json({ success: false, message: 'No Google Maps URL provided' });
+        }
+        const updated = await Restaurant.findByIdAndUpdate(
+            id,
+            { googleMapsUrl },
+            { new: true, runValidators: true }
+        );
+        if (!updated) {
+            return res.status(404).json({ success: false, message: 'Restaurant not found' });
+        }
+        res.status(200).json({ success: true, restaurant: updated });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
 //------------------------------------------------------

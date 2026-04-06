@@ -2,6 +2,19 @@ import React from 'react'
 import Resto from './assets/resto.jpg'
 import Pin from './assets/pin.png'
 import { Rating } from './components/rating'
+import { useState } from 'react';
+
+const [editing, setEditing] = useState(false);
+const [newUrl, setNewUrl] = useState(restaurant.googleMapsUrl || "");
+const isOwner = restaurant.currentUserRole === 'owner';
+
+const handleUpdateGoogleMapsUrl = async (newUrl) => {
+  await fetch(`/api/restaurant/${restaurant._id}/google-maps-url`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ googleMapsUrl: newUrl }),
+  });
+};
 
 const RestaurantCard = ({ restaurant }) => {
   if (!restaurant) return null;
@@ -32,7 +45,26 @@ const RestaurantCard = ({ restaurant }) => {
           <div className="flex items-center text-sm text-muted-foreground gap-1 mb-3">
             <Rating rating={restaurant.avgRating} showValue={false} />
                 <p>({restaurant.avgRating})</p>
-            </div>  
+          </div>  
+              {isOwner && (
+            <div className="mt-2">
+              {editing ? (
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="text"
+                    value={newUrl}
+                    onChange={e => setNewUrl(e.target.value)}
+                    placeholder="Google Maps URL"
+                    className="border rounded px-2 py-1 text-sm w-64"
+                  />
+                  <button onClick={handleUpdateGoogleMapsUrl} className="bg-primary text-white px-3 py-1 rounded text-sm">Save</button>
+                  <button onClick={() => setEditing(false)} className="text-xs text-muted-foreground">Cancel</button>
+                </div>
+              ) : (
+                <button onClick={() => setEditing(true)} className="text-xs text-primary underline">Update Google Maps Link</button>
+              )}
+            </div>
+          )}
         </div>
     </div>
   )
