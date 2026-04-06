@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useParams } from 'react-router-dom'
 import SearchBar from './components/SearchBar'
+import { Link } from 'react-router-dom'
 import FilterBar from './components/FilterBar'
 import { useAuth } from './context/AuthContext'
 import { toast } from 'sonner'
@@ -290,7 +291,20 @@ const RestoReview = () => {
         totalReviews: 0,
         address: "Loading..."
     };
-
+    const isOwner = user?.role === 'owner';
+    if (isOwner && (user?.restaurantID.name!== restaurantObj.name)) {
+            return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+            <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+            <p className="mb-4">You do not have permission to view other restaurants.</p>
+            <Link to="/">
+                <Button>Go back</Button>
+            </Link>
+            </div>
+        </div>
+        );
+    }
     return (
         <form onSubmit={handlePostReview}>
             <div className="max-w-5xl mx-auto p-6 font-sans text-slate-800">
