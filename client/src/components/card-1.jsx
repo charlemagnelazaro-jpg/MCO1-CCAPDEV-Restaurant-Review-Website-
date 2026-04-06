@@ -58,6 +58,7 @@ const ReviewCard = React.forwardRef(({
   const { updateUserHelpfulVotes } = useAuth();
 
   const isAdmin = currentUser?.role === 'admin';
+
   const handleAdminDelete = async (e) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this review?')) return;
@@ -68,6 +69,7 @@ const ReviewCard = React.forwardRef(({
       });
       if (res.ok) {
         onDelete?.();
+        window.location.reload();
       } else {
         alert('Failed to delete review.');
       }
