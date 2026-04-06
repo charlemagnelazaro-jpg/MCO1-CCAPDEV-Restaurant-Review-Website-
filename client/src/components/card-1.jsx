@@ -247,7 +247,7 @@ const ReviewCard = React.forwardRef(({
             <span className="text-xl font-bold">×</span>
           </Button>
         )}
-          {isOwnReview && (
+          {isOwnReview && !inHome && (
             <div className="relative">
               <Button 
                 type="button"

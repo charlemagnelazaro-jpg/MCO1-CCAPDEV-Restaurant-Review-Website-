@@ -34,6 +34,9 @@ const RestoReview = () => {
     const [editingReviewId, setEditingReviewId] = useState(null);
     const [aiSummary, setAiSummary] = useState(null);
     const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
+    const [bgImage, setBgImage] = useState(null); // local override after upload
+    const [imageUploading, setImageUploading] = useState(false);
 
     const fetchReviews = async () => {
         if (!restaurant) return;
@@ -284,6 +287,38 @@ const RestoReview = () => {
         return new URL(path, import.meta.url).href;
     };
 
+    const handleImageUpload = async (acceptedFiles) => {
+        if (!acceptedFiles || acceptedFiles.length === 0) return;
+        const file = acceptedFiles[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async () => {
+            const base64 = reader.result;
+            setImageUploading(true);
+            try {
+                const res = await fetch(`/api/restaurant/updateImage/${encodeURIComponent(restaurant)}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64 }),
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setBgImage(data.backgroundImg);
+                    toast.success('Restaurant image updated!');
+                    setShowImageModal(false);
+                } else {
+                    const err = await res.json();
+                    toast.error('Failed to update image: ' + (err.message || 'Unknown error'));
+                }
+            } catch (e) {
+                toast.error('Error uploading image.');
+            } finally {
+                setImageUploading(false);
+            }
+        };
+        reader.onerror = () => toast.error('Failed to read file.');
+    };
+
     const restaurantObj = restaurants?.find((r) => r.name === restaurant) || {
         name: restaurant,
         backgroundImg: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
@@ -292,17 +327,17 @@ const RestoReview = () => {
         address: "Loading..."
     };
     const isOwner = user?.role === 'owner';
-    if (isOwner && (user?.restaurantID.name!== restaurantObj.name)) {
-            return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-            <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
-            <p className="mb-4">You do not have permission to view other restaurants.</p>
-            <Link to="/">
-                <Button>Go back</Button>
-            </Link>
+    if (isOwner && (user?.restaurantID.name !== restaurantObj.name)) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+                    <p className="mb-4">You do not have permission to view other restaurants.</p>
+                    <Link to="/">
+                        <Button>Go back</Button>
+                    </Link>
+                </div>
             </div>
-        </div>
         );
     }
     return (
@@ -310,9 +345,58 @@ const RestoReview = () => {
             <div className="max-w-5xl mx-auto p-6 font-sans text-slate-800">
 
                 <div className="mb-8">
-                    <div className="h-64 w-full overflow-hidden rounded-xl mb-4">
-                        <img src={restaurantObj.backgroundImg} className="w-full h-full object-cover" alt={restaurantObj.name} />
+                    <div className="relative h-64 w-full overflow-hidden rounded-xl mb-4 group">
+                        <img src={bgImage || restaurantObj.backgroundImg} className="w-full h-full object-cover" alt={restaurantObj.name} />
+                        {isOwner && (
+                            <button
+                                type="button"
+                                onClick={() => setShowImageModal(true)}
+                                className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 hover:bg-black/80 text-white text-xs font-semibold px-3 py-1.5 rounded-lg backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 shadow-lg"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                                Edit Photo
+                            </button>
+                        )}
                     </div>
+
+                    {/* Image Upload Modal */}
+                    {showImageModal && (
+                        <div
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                            onClick={(e) => { if (e.target === e.currentTarget) setShowImageModal(false); }}
+                        >
+                            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-lg font-bold text-slate-800">Update Restaurant Photo</h3>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowImageModal(false)}
+                                        className="text-slate-400 hover:text-slate-600 transition-colors text-2xl leading-none"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                <p className="text-sm text-slate-500">Drag & drop your new restaurant photo below.</p>
+                                {imageUploading ? (
+                                    <div className="flex flex-col items-center justify-center py-10 gap-3">
+                                        <p className="text-sm text-slate-500 font-medium">Uploading to Cloudinary...</p>
+                                    </div>
+                                ) : (
+                                    <Dropzone
+                                        maxSize={1024 * 1024 * 10}
+                                        minSize={1024}
+                                        maxFiles={1}
+                                        accept={{ 'image/*': [] }}
+                                        onDrop={handleImageUpload}
+                                        onError={console.error}
+                                    >
+                                        <DropzoneEmptyState />
+                                        <DropzoneContent />
+                                    </Dropzone>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex flex-col gap-2">
                         <h1 className="text-3xl font-bold">{restaurantObj.name}</h1>

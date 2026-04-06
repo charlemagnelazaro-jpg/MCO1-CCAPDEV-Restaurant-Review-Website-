@@ -1,6 +1,7 @@
 import Restaurant from '../models/Restaurant.js';
 import Review from '../models/Review.js';
 import Groq from 'groq-sdk';
+import { v2 as cloudinary } from 'cloudinary';
 
 
 // Create a new restaurant
@@ -110,3 +111,35 @@ export const getRestaurantSummary = async (req, res) => {
     }
 };
 
+// Update restaurant background image
+export const updateRestaurantImage = async (req, res) => {
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
+    try {
+        const { name } = req.params;
+        const { image } = req.body;
+
+        if (!image) return res.status(400).json({ success: false, message: 'No image provided' });
+
+        const result = await cloudinary.uploader.upload(image, {
+            folder: 'archereats_restaurants',
+        });
+
+        const updated = await Restaurant.findOneAndUpdate(
+            { name },
+            { backgroundImg: result.secure_url },
+            { new: true }
+        );
+
+        if (!updated) return res.status(404).json({ success: false, message: 'Restaurant not found' });
+
+        res.status(200).json({ success: true, backgroundImg: result.secure_url });
+    } catch (error) {
+        console.error('Image update error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
