@@ -21,6 +21,9 @@ const restaurantSchema = new mongoose.Schema({
     totalReviews: {
         type: Number,
         default: 0
+    },
+    googleMapsUrl:{
+        type: String
     }
 }, {
     timestamps: true
