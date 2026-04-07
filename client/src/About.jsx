@@ -119,7 +119,7 @@ export default function About() {
                 />
                 <div className="relative max-w-4xl mx-auto text-center space-y-6">
                     <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-2">
-                        CCAPDEV 
+                        CCAPDEV
                     </div>
                     <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
                         About{' '}
@@ -142,7 +142,7 @@ export default function About() {
                 </div>
             </section>
 
-=            <section className="max-w-4xl mx-auto px-6 py-16 space-y-4 text-center">
+            <section className="max-w-4xl mx-auto px-6 py-16 space-y-4 text-center">
                 <h2 className="text-3xl font-bold text-slate-800">What is ArcherEats?</h2>
                 <p className="text-slate-600 leading-relaxed max-w-2xl mx-auto">
                     ArcherEats is a full-stack web application that lets De La Salle University students
@@ -151,7 +151,7 @@ export default function About() {
                 </p>
             </section>
 
-=            <section className="bg-white py-16 px-6">
+            <section className="bg-white py-16 px-6">
                 <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-12 space-y-2">
                         <div className="inline-flex items-center gap-2 text-slate-500 text-sm font-semibold uppercase tracking-widest">
@@ -197,7 +197,7 @@ export default function About() {
                 </div>
             </section>
 
-=            <section className="max-w-6xl mx-auto px-6 py-16 space-y-12">
+            <section className="max-w-6xl mx-auto px-6 py-16 space-y-12">
                 <div className="text-center space-y-2">
                     <div className="inline-flex items-center gap-2 text-slate-500 text-sm font-semibold uppercase tracking-widest">
                         <Package size={14} /> Dependencies
@@ -206,7 +206,7 @@ export default function About() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-=                    <div>
+                    <div>
                         <div className="flex items-center gap-2 mb-4">
                             <span className="px-3 py-1 bg-violet-100 text-violet-700 text-xs font-bold rounded-full uppercase tracking-widest">
                                 Client
@@ -236,7 +236,7 @@ export default function About() {
                         </div>
                     </div>
 
-=                    <div>
+                    <div>
                         <div className="flex items-center gap-2 mb-4">
                             <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-widest">
                                 Server
