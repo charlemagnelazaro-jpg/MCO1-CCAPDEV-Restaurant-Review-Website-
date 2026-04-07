@@ -3,7 +3,7 @@ import Logo from '../assets/logo_transparent.png'
 import ProfileIcon from '../assets/profile.png'
 import SearchBar from './SearchBar';
 import { Button } from './ui/button';
-import { AddRestaurant} from './addRestoButton';
+import { AddRestaurant } from './addRestoButton';
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
 import {
@@ -56,7 +56,7 @@ const Navbar = () => {
       setError("Passwords do not match.");
       return;
     }
-    const result = await register(regEmail, regPassword, registerAsOwner,regRestaurantID, regName);
+    const result = await register(regEmail, regPassword, registerAsOwner, regRestaurantID, regName);
     if (result.success) {
       setIsOpen(false);
       setRegEmail("");
@@ -75,12 +75,17 @@ const Navbar = () => {
     <div className="fixed top-0 left-0 right-0 bg-gray-50 h-15 px-6 flex items-center border-b-2 z-50">
       <div className="flex justify-between items-center w-full mx-5">
 
-        <Link to="/">
-          <div className="flex items-center gap-2 ">
-            <img className="rounded-lg" src={Logo} width="32px" alt="Logo" />
-            <p className='font-bold'>ArcherEats</p>
-          </div>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link to="/">
+            <div className="flex items-center gap-2">
+              <img className="rounded-lg" src={Logo} width="32px" alt="Logo" />
+              <p className='font-bold'>ArcherEats</p>
+            </div>
+          </Link>
+          <Link to="/about" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+            About
+          </Link>
+        </div>
         <div className="flex items-center gap-4">
           {user?.role === "admin" && (
             <div className="flex items-center gap-4">
@@ -203,10 +208,10 @@ const Navbar = () => {
                             <Input
                               id="owner-name"
                               placeholder="Enter your name"
-                              type="text" 
+                              type="text"
                               required
                               value={regName}
-                              onChange={(e) => setRegName(e.target.value)}         
+                              onChange={(e) => setRegName(e.target.value)}
                             />
                           </div>
                           <div className="space-y-2">
@@ -214,10 +219,10 @@ const Navbar = () => {
                             <Input
                               id="restaurant-id"
                               placeholder="Enter your restaurant ID"
-                              type="text" 
+                              type="text"
                               required
                               value={regRestaurantID}
-                              onChange={(e) => setRegRestaurantID(e.target.value)}         
+                              onChange={(e) => setRegRestaurantID(e.target.value)}
                             />
                           </div>
                         </div>
