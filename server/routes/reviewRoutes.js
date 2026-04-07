@@ -1,5 +1,5 @@
 import express from 'express';
-import { postReviews, getAllReviews, getReviewsByRestaurant, updateVotes, addReplyToReview, updateAvgRating, getRecentReviews, getReviewsByUser, editReview, deleteReview } from '../controllers/reviewController.js';
+import { postReviews, getReviewsByRestaurant, updateVotes, addReplyToReview, updateAvgRating, getRecentReviews, getReviewsByUser, editReview, deleteReview } from '../controllers/reviewController.js';
 import { isAuthenticated, isAdmin } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
