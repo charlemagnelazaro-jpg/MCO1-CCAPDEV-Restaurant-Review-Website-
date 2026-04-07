@@ -27,6 +27,7 @@ const RestoReview = () => {
     const [comment, setComment] = useState("");
     const [reviewList, setReviewList] = useState([]);
     const [sortBy, setSortBy] = useState("date"); // "date" | "upvotes"
+    const [searchQuery, setSearchQuery] = useState("");
     const [selectedReview, setSelectedReview] = useState(null);
     const [replyText, setReplyText] = useState("");
     const [isEditing, setIsEditing] = useState(false);
@@ -93,13 +94,19 @@ const RestoReview = () => {
     }, [restaurant]);
 
 
-    const filteredReviews = [...reviewList].sort((a, b) => {
-        if (sortBy === "upvotes") {
-            const diff = (b.totalVoteCount ?? 0) - (a.totalVoteCount ?? 0);
-            return diff !== 0 ? diff : new Date(b.createdAt) - new Date(a.createdAt);
-        }
-        return new Date(b.createdAt) - new Date(a.createdAt);
-    });
+    const filteredReviews = reviewList
+        .filter((r) =>
+            !searchQuery ||
+            (r.name && r.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (r.review && r.review.toLowerCase().includes(searchQuery.toLowerCase()))
+        )
+        .sort((a, b) => {
+            if (sortBy === "upvotes") {
+                const diff = (b.totalVoteCount ?? 0) - (a.totalVoteCount ?? 0);
+                return diff !== 0 ? diff : new Date(b.createdAt) - new Date(a.createdAt);
+            }
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
 
     const handleVoteUpdate = (reviewId, newCount) => {
         setReviewList(prev =>
@@ -431,7 +438,12 @@ const RestoReview = () => {
                             </h2>
 
                             <div className='flex items-center gap-4'>
-                                <FilterBar value={sortBy} onChange={setSortBy} />
+                                <FilterBar
+                                    sortValue={sortBy}
+                                    onSortChange={setSortBy}
+                                    searchValue={searchQuery}
+                                    onSearchChange={setSearchQuery}
+                                />
                             </div>
 
                         </div>
