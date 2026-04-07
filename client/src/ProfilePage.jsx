@@ -3,7 +3,7 @@ import { EditProfile } from '@/components/ui/edit-profile'
 import { Card, CardContent, CardHeader, CardTitle } from './components/card'
 import { Avatar, AvatarImage, AvatarFallback } from './components/avatar'
 import { Button } from './components/button'
-import { MapPin } from 'lucide-react'
+import { MapPin, UtensilsCrossed } from 'lucide-react'
 import AnimatedLoadingSkeleton from './components/ui/animated-loading-skeleton'
 import gsap from 'gsap'
 import profileCover from './assets/profile_cover.jpg'
@@ -14,10 +14,12 @@ const ProfilePage = () => {
   const containerRef = useRef(null)
   const { user, updateProfile } = useAuth();
   const [recentReviews, setRecentReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserReviews = async () => {
       if (!user) return;
+      setReviewsLoading(true);
       try {
         const userId = user._id || user.id;
         if (!userId) return;
@@ -38,6 +40,8 @@ const ProfilePage = () => {
         }
       } catch (error) {
         console.error("Failed to fetch user reviews:", error);
+      } finally {
+        setReviewsLoading(false);
       }
     };
 
@@ -196,7 +200,25 @@ const ProfilePage = () => {
             <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
 
             <div className="w-full">
-              <AnimatedLoadingSkeleton reviews={recentReviews} />
+              {reviewsLoading ? (
+                <div className="flex items-center justify-center py-16 text-muted-foreground">
+                  <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mr-3" />
+                  Loading reviews...
+                </div>
+              ) : recentReviews.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 px-6 text-center bg-white dark:bg-card rounded-xl shadow-sm border border-border">
+                  <UtensilsCrossed className="w-14 h-14 text-muted-foreground/40 mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-1">No reviews yet</h3>
+                  <p className="text-muted-foreground text-sm mb-6">You haven't written any reviews yet. Start exploring restaurants and share your experience!</p>
+                  <Link to="/">
+                    <Button className="rounded-xl px-6">
+                      Start Exploring
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <AnimatedLoadingSkeleton reviews={recentReviews} />
+              )}
             </div>
           </div>
         </div>
