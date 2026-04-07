@@ -87,7 +87,7 @@ const Navbar = () => {
               <AddRestaurant />
             </div>
           )}
-          <SearchBar />
+          {user?.role !== 'owner' && (<SearchBar />)}
           {!user ? (
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
@@ -257,7 +257,7 @@ const Navbar = () => {
               <Button onClick={logout} variant="outline" className="font-bold border-1 border-black">Log Out</Button>
             </div>
           )}
-          {(user?.role !== 'admin') && (
+          {(user?.role !== 'admin' && user?.role !== 'owner') && (
             <Link to="/profile" className="flex-shrink-0">
               <img src={ProfileIcon} width='24px' alt="Profile" />
             </Link>
