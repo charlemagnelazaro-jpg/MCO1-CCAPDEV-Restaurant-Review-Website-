@@ -2,7 +2,7 @@ import { Search, CalendarDays, ThumbsUp } from "lucide-react";
 
 export default function FilterBar({ sortValue, onSortChange, searchValue, onSearchChange }) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex items-center gap-2 flex-nowrap">
       {/* Search input */}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

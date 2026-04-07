@@ -433,7 +433,7 @@ const RestoReview = () => {
 
                     <div className="md:col-span-2 flex-1 space-y-6">
                         <div className="flex items-center justify-between border-b pb-2">
-                            <h2 className="text-xl font-bold w-full">
+                            <h2 className="text-xl font-bold shrink-0">
                                 {user?.role === 'owner' ? "Select a Review to Reply" : "Community Reviews"}
                             </h2>
 
