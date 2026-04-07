@@ -432,10 +432,6 @@ const RestoReview = () => {
 
                             <div className='flex items-center gap-4'>
                                 <FilterBar value={sortBy} onChange={setSortBy} />
-                                <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">
-                                    {filteredReviews.length}
-                                </span>
-
                             </div>
 
                         </div>
