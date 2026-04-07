@@ -3,20 +3,25 @@ import { v2 as cloudinary } from 'cloudinary';
 import Restaurant from '../models/Restaurant.js';
 import mongoose from 'mongoose';
 
-export const register = async (req, res) => { 
+export const register = async (req, res) => {
     try {
-        const { email, password, role, restaurantID, name} = req.body;
+        const { email, password, role, restaurantID, name } = req.body;
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ success: false, message: 'User already exists' });
         }
-        
+
+        if (role === 'admin') {
+            return res.status(403).json({ success: false, message: 'Cannot register as an admin' });
+        }
+
         const userData = {
             email,
             password,
             role
         };
-        
+
         if (name) {
             userData.name = name;
         }
@@ -90,13 +95,13 @@ export const checkSession = async (req, res) => {
             return res.json({ user: null });
         }
 
-       
+
         const user = await User.findById(req.session.userId).populate('restaurantID');
         if (!user) {
             return res.json({ user: null });
         }
 
-        res.json({ user }); 
+        res.json({ user });
     } catch (error) {
         console.error('Check session error:', error);
         res.status(500).json({ user: null });
