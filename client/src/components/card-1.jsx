@@ -36,7 +36,8 @@ const ReviewCard = React.forwardRef(({
   inHome = false,
   onEdit,
   onDelete,
-  isEdited
+  isEdited,
+  onVoteChange
 }, ref) => {
 
 
@@ -47,9 +48,9 @@ const ReviewCard = React.forwardRef(({
 
   const initialUserVote = React.useMemo(() => {
     if (!currentUser) return null;
-    const userId = currentUser._id || currentUser.id;
-    if (upvotes.includes(userId)) return "upvote";
-    if (downvotes.includes(userId)) return "downvote";
+    const userId = (currentUser._id || currentUser.id).toString();
+    if (upvotes.some(id => id.toString() === userId)) return "upvote";
+    if (downvotes.some(id => id.toString() === userId)) return "downvote";
     return null;
   }, [currentUser, upvotes, downvotes]);
 
@@ -109,19 +110,24 @@ const ReviewCard = React.forwardRef(({
       alert("Please login to vote.");
       return;
     }
+    let newCount;
     if (userVote === "upvote") {
-      setVoteCount(voteCount - 1);
+      newCount = voteCount - 1;
+      setVoteCount(newCount);
       setUserVote(null);
       handleVoteApiCall("none");
     } else if (userVote === "downvote") {
-      setVoteCount(voteCount + 2);
+      newCount = voteCount + 2;
+      setVoteCount(newCount);
       setUserVote("upvote");
       handleVoteApiCall("upvote");
     } else {
-      setVoteCount(voteCount + 1);
+      newCount = voteCount + 1;
+      setVoteCount(newCount);
       setUserVote("upvote");
       handleVoteApiCall("upvote");
     }
+    onVoteChange?.(id, newCount);
   };
 
   const handleDownvote = () => {
@@ -129,19 +135,24 @@ const ReviewCard = React.forwardRef(({
       alert("Please login to vote.");
       return;
     }
+    let newCount;
     if (userVote === "downvote") {
-      setVoteCount(voteCount + 1);
+      newCount = voteCount + 1;
+      setVoteCount(newCount);
       setUserVote(null);
       handleVoteApiCall("none");
     } else if (userVote === "upvote") {
-      setVoteCount(voteCount - 2);
+      newCount = voteCount - 2;
+      setVoteCount(newCount);
       setUserVote("downvote");
       handleVoteApiCall("downvote");
     } else {
-      setVoteCount(voteCount - 1);
+      newCount = voteCount - 1;
+      setVoteCount(newCount);
       setUserVote("downvote");
       handleVoteApiCall("downvote");
     }
+    onVoteChange?.(id, newCount);
   };
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },

@@ -118,7 +118,8 @@ export const updateVotes = async (req, res) => {
         const voteType = req.body.voteType;
 
         // Track whether this user was already upvoting before they clicked
-        const wasUpvoting = review.upvotes.includes(userId);
+        const wasUpvoting = review.upvotes.some(id => id.toString() === userId);
+        const wasDownvoting = review.downvotes.some(id => id.toString() === userId);
 
         //remove user from both arrays to remove previous vote
         review.upvotes = review.upvotes.filter(id => id.toString() !== userId);
@@ -129,7 +130,8 @@ export const updateVotes = async (req, res) => {
         //append to voters array and calculate vote delta
         if (voteType === 'upvote') {
             review.upvotes.push(userId);
-            if (!wasUpvoting) voteDelta = 1; // they were not upvoting, now they are
+            // going from nothing→upvote (+1) or downvote→upvote (+1, the -1 from removing downvote is handled by helpfulVotes not tracking downvotes directly)
+            voteDelta = wasUpvoting ? 0 : 1;
         } else if (voteType === 'downvote') {
             review.downvotes.push(userId);
             if (wasUpvoting) voteDelta = -1; // they were upvoting, now they are downvoting

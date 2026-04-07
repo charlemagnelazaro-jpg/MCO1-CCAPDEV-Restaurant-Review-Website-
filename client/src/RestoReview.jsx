@@ -11,7 +11,6 @@ import {
 } from './components/ui/dropzone'
 import { Button } from '@/components/ui/button';
 import { useParams } from 'react-router-dom'
-import SearchBar from './components/SearchBar'
 import { Link } from 'react-router-dom'
 import FilterBar from './components/FilterBar'
 import { useAuth } from './context/AuthContext'
@@ -27,7 +26,7 @@ const RestoReview = () => {
     const [title, setTitle] = useState("");
     const [comment, setComment] = useState("");
     const [reviewList, setReviewList] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [sortBy, setSortBy] = useState("date"); // "date" | "upvotes"
     const [selectedReview, setSelectedReview] = useState(null);
     const [replyText, setReplyText] = useState("");
     const [isEditing, setIsEditing] = useState(false);
@@ -94,10 +93,19 @@ const RestoReview = () => {
     }, [restaurant]);
 
 
-    const filteredReviews = reviewList.filter((r) =>
-        (r.name && r.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (r.review && r.review.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    const filteredReviews = [...reviewList].sort((a, b) => {
+        if (sortBy === "upvotes") {
+            const diff = (b.totalVoteCount ?? 0) - (a.totalVoteCount ?? 0);
+            return diff !== 0 ? diff : new Date(b.createdAt) - new Date(a.createdAt);
+        }
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    const handleVoteUpdate = (reviewId, newCount) => {
+        setReviewList(prev =>
+            prev.map(r => r.id === reviewId ? { ...r, totalVoteCount: newCount } : r)
+        );
+    };
 
     //handle missing restaurant
     if (!restaurant) return <div>Restaurant not found.</div>;
@@ -423,7 +431,7 @@ const RestoReview = () => {
                             </h2>
 
                             <div className='flex items-center gap-4'>
-                                <FilterBar onChange={(e) => setSearchQuery(e.target.value)} />
+                                <FilterBar value={sortBy} onChange={setSortBy} />
                                 <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-sm font-medium">
                                     {filteredReviews.length}
                                 </span>
@@ -465,6 +473,7 @@ const RestoReview = () => {
                                         onSelect={setSelectedReview}
                                         onEdit={() => handleEditReviewClick(item)}
                                         onDelete={() => handleDeleteReviewClick(item.id)}
+                                        onVoteChange={handleVoteUpdate}
                                         {...item}
                                     />
                                 ))}
