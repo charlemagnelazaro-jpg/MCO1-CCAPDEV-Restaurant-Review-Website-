@@ -404,7 +404,7 @@ const RestoReview = () => {
                             <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded border border-yellow-200">
                                 <img src={Star} width='16px' alt="Star" />
                                 <span className="font-semibold">{restaurantObj.avgRating}</span>
-                                <span className="text-slate-500">({restaurantObj.totalReviews} reviews)</span>
+                                <span className="text-slate-500">({filteredReviews.length} reviews)</span>
                             </div>
                             <div className="flex items-center gap-1 text-slate-600">
                                 <img src={Pin} width='16px' alt="Location" />
