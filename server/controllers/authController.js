@@ -45,6 +45,9 @@ export const register = async (req, res) => {
         }
         const user = new User(userData);
         await user.save();
+
+        req.session.userId = user._id;
+
         res.status(201).json({ success: true, user: user.toJSON() });
     } catch (error) {
         console.error('Register error:', error);
